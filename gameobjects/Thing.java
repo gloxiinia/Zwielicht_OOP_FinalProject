@@ -21,6 +21,13 @@ public class Thing {
         this.examination = examination;
     }
 
+    public Thing(String name, String description, String examination, ArrayList<String> aliases){
+        this.aliases = aliases;
+        this.name = name;
+        this.description = description;
+        this.examination = examination;
+    }
+
     //setters
     public void setName(String name){
         this.name = name;

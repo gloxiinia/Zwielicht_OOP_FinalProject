@@ -1,0 +1,20 @@
+Office
+1,-1,2,-1
+The crime scene, you've been called here through an anonymous source.
+EXAMINE
+Nothing much to see here, besides the dead body, of course.
+END
+Balcony
+-1,0,-1,-1
+A balcony connected to the office. You can see the city skyline from out here.
+EXAMINE
+Calm, no winds right now. There's a broken pot near the railing.
+END
+Library
+-1,-1,-1,0
+A sizable library for a penthouse. It's got at least 20 rows of bookshelves, 
+ranging from entomology to microbiology.
+EXAMINE
+Someone's sitting by the table, book in hand.
+END
+ENDOFFILE

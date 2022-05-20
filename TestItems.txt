@@ -1,0 +1,24 @@
+pistol with a silencer
+0
+pistol,gun,firearm,gun with a silencer
+The murder weapon, according to the report. Wiped clean, no fingerprints were 
+found on it.
+PICKUP
+false
+false
+Engraved on the side are the initials M.A.
+END
+book on mythology
+1
+open book,mythology book,myth book,book about mythology,book about myths
+A fairly thick book on the various mythos around the world. It's open and 
+looks recently read.
+PICKUP
+true
+true
+The page was opened on the section regarding Greek and Roman myths.
+there are highlights on the page about Apollo.
+END
+ENDOFFILE
+
+
