@@ -1,16 +1,15 @@
 package gameobjects;
 
-public class Scene extends Thing {
+public class Scene extends ThingHolder {
 
     private int north, south, east, west;
 
-    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w){
-        super(aName, aDescription, anExamination);
+    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl){
+        super(aName, aDescription, anExamination, tl);
         this.north = n;
         this.south = s;
         this.east = e;
         this.west = w;
-
     }
 
     //setters

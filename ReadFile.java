@@ -7,71 +7,21 @@ import java.util.Arrays;
 
 import gameobjects.Item;
 import gameobjects.Scene;
+import gameobjects.Thing;
+import gameobjects.ThingList;
 
 public class ReadFile {
-    
-    public static ArrayList<Scene> createScenes(){
-        try{
-            BufferedReader reader = new BufferedReader(new FileReader("TestScenes.txt"));
-            String line = reader.readLine();
-            ArrayList<Scene> scenes = new ArrayList<>();
-
-            while(!line.equals("ENDOFFILE")){
-                //location name
-                String name = line;
-                line = reader.readLine();
-
-                //location exits
-                ArrayList<String> neighbors = new ArrayList<>(Arrays.asList(line.split(",")));
-
-                int n = Integer.parseInt(neighbors.get(0));
-                int s = Integer.parseInt(neighbors.get(1));
-                int e = Integer.parseInt(neighbors.get(2));
-                int w = Integer.parseInt(neighbors.get(3));
-                line = reader.readLine();
-                
-                //location description
-                String description = "";
-                while(!line.equals("EXAMINE")){
-                    description += line + '\n';
-                    line = reader.readLine();
-                }
-                line = reader.readLine();
-
-                //location examination (detailed description when you examine a location)
-                String examination = "";
-                while(!line.equals("END")){
-                    examination += line + '\n';
-                    line = reader.readLine();
-                }
-
-                Scene aScene = new Scene(name, description, examination, n, s, e, w);
-                scenes.add(aScene);
-
-                line = reader.readLine();
-
-            }
-
-            reader.close();
-            return scenes;
-
-        } catch (IOException e){
-            System.out.println("File could not be accessed, try again!");
-        }
-        return null;
-
-    }
 
     public static ArrayList<Item> createItems(){
         try{
             BufferedReader reader = new BufferedReader(new FileReader("TestItems.txt"));
             String line = reader.readLine();
-            ArrayList<Item> items = new ArrayList<>();
+            ArrayList<Item> items = new ArrayList<Item>();
 
             while(!line.equals("ENDOFFILE")){
                 //item name
                 String name = line;
-                name = name.toLowerCase();
+                name = name.trim().toLowerCase();
                 
                 line = reader.readLine();
 
@@ -99,6 +49,10 @@ public class ReadFile {
                 boolean isUsable = Boolean.parseBoolean(line);
                 line = reader.readLine();
 
+                //is the item a key item?
+                boolean isKeyItem = Boolean.parseBoolean(line);
+                line = reader.readLine();
+
                 //item examination (detailed description when you examine a location)
                 String examination = "";
                 while(!line.equals("END")){
@@ -106,7 +60,7 @@ public class ReadFile {
                     line = reader.readLine();
                 }
 
-                Item anItem = new Item(name, description, examination, location, aliases, isPickupable, isUsable);
+                Item anItem = new Item(name, description, examination, location, aliases, isPickupable, isUsable, isKeyItem);
                 items.add(anItem);
 
                 line = reader.readLine();
@@ -121,23 +75,89 @@ public class ReadFile {
         return null;
     }
 
+    public static ArrayList<Scene> createScenes(){
+
+        ArrayList<Item> allItems = createItems();
+
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader("TestScenes.txt"));
+            String line = reader.readLine();
+            ArrayList<Scene> scenes = new ArrayList<>();
+
+            while(!line.equals("ENDOFFILE")){
+                //location name
+                String name = line.trim();
+                line = reader.readLine();
+
+                //location index
+                String index = line.trim();
+                int numIndex = Integer.parseInt(index);
+                line = reader.readLine();
+
+                //location exits
+                ArrayList<String> neighbors = new ArrayList<>(Arrays.asList(line.split(",")));
+
+                int n = Integer.parseInt(neighbors.get(0));
+                int s = Integer.parseInt(neighbors.get(1));
+                int e = Integer.parseInt(neighbors.get(2));
+                int w = Integer.parseInt(neighbors.get(3));
+                line = reader.readLine();
+                
+                //location description
+                String description = "";
+                while(!line.equals("EXAMINE")){
+                    description += line + '\n';
+                    line = reader.readLine();
+                }
+                line = reader.readLine();
+
+                //location examination (detailed description when you examine a location)
+                String examination = "";
+                while(!line.equals("END")){
+                    examination += line + '\n';
+                    line = reader.readLine();
+                }
+
+                ThingList sceneItems = new ThingList();
+                for(Item i : allItems){
+                    if(i.getLocation() == numIndex ){
+                        sceneItems.add(i);
+                    }
+                }
+
+                Scene aScene = new Scene(name, description, examination, n, s, e, w, sceneItems);
+                scenes.add(aScene);
+
+                line = reader.readLine();
+
+            }
+
+            reader.close();
+            return scenes;
+
+        } catch (IOException e){
+            System.out.println("File could not be accessed, try again!");
+        }
+        return null;
+
+    }
+
     //Testing out the ReadFile methods
     public static void main(String[] args ){
         ArrayList<Scene> checking = createScenes();
-        for(int i = 0; i < checking.size(); i++){
-            System.out.println(checking.get(i).getName());
-            System.out.println(checking.get(i).getDescription());
-            System.out.println(checking.get(i).getExamination());
+        for(Scene i : checking){
+            System.out.println(i.getName());
+            System.out.println(i.getDescription());
+            System.out.println(i.getExamination());
+            ThingList k = i.getThings();
+            System.out.println(k.thisItem("pistol with a silencer"));
+            System.out.println(k.thisItem("gun"));
+            System.out.println(k.thisItem("book on mythology"));
+            System.out.println(k.thisItem("gun").isThingKey());
         }
 
-        ArrayList<Item> checking2 = createItems();
-        for(int i = 0; i < checking2.size(); i++){
-            System.out.println(checking2.get(i).getName());
-            System.out.println(checking2.get(i).getDescription());
-            System.out.println(checking2.get(i).getExamination());
-            System.out.println(checking2.get(i).isItemPickupable());
-            System.out.println(checking2.get(i).isItemUsable());
-            System.out.println(checking2.get(i).getAliases());
-        }
+
+
+
     }
 }

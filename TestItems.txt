@@ -6,6 +6,7 @@ found on it.
 PICKUP
 false
 false
+false
 Engraved on the side are the initials M.A.
 END
 book on mythology
@@ -14,6 +15,7 @@ open book,mythology book,myth book,book about mythology,book about myths
 A fairly thick book on the various mythos around the world. It's open and 
 looks recently read.
 PICKUP
+false
 true
 true
 The page was opened on the section regarding Greek and Roman myths.

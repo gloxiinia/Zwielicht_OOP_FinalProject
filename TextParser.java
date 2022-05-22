@@ -28,13 +28,14 @@ public class TextParser {
 
         String command = userInput.trim().toLowerCase();
         
-        boolean foundExaminewords = false;
-        boolean foundMovewords = false;
-        boolean foundTalkwords = false;
-        boolean foundTakewords = false;
-        boolean foundCombatwords = false;
-        boolean foundUsewords = false;
-        boolean foundQuitwords = false;
+        boolean foundExamineWords = false;
+        boolean foundMoveWords = false;
+        boolean foundTalkWords = false;
+        boolean foundTakeWords = false;
+        boolean foundDropWords = false;
+        boolean foundCombatWords = false;
+        boolean foundUseWords = false;
+        boolean foundQuitWords = false;
 
         List<String> words = new ArrayList<>(Arrays.asList(command.split(" ")));
 
@@ -44,9 +45,10 @@ public class TextParser {
         List<String> talkActions = new ArrayList<>(Arrays.asList("talk", "chat"));
         List<String> takeActions = new ArrayList<>(Arrays.asList("take", "grab", "nab"));
         List<String> combatActions = new ArrayList<>(Arrays.asList("fight", "battle", "duel"));
-        List<String> yesActions = new ArrayList<>(Arrays.asList("yes", "correct", "y", "yeah", "yea", "yep", "mhm", "right"));
-        List<String> noActions = new ArrayList<>(Arrays.asList("no", "n", "nope", "wrong", "nuhuh", "nah"));
+        List<String> yesActions = new ArrayList<>(Arrays.asList("yes", "correct", "y", "yeah", "yea", "yep", "mhm", "right", "true"));
+        List<String> noActions = new ArrayList<>(Arrays.asList("no", "n", "nope", "wrong", "nuhuh", "nah", "incorrect", "false"));
         List<String> quitActions = new ArrayList<>(Arrays.asList("quit", "exit", "q"));
+        List<String> directions = new ArrayList<>(Arrays.asList("north", "n", "south", "s", "east", "e", "west", "w"));
 
         int remainingWordsindex = 0;
         String remainingWords;
@@ -54,20 +56,21 @@ public class TextParser {
 
         if(words.size() > 0){
 
+            //EXAMINE
             //Parsing words for the examine command
             if(words.get(0).equals("look") && words.get(1).equals("at")){
                 remainingWordsindex = 2;
-                foundExaminewords = true;
+                foundExamineWords = true;
                 
             }
-            else if (examineActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            else if (examineActions.contains(words.get(0))) {
                 remainingWordsindex = 1;
-                foundExaminewords = true;
+                foundExamineWords = true;
                 
             }
 
 
-            if(foundExaminewords == true){
+            if(foundExamineWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -81,23 +84,40 @@ public class TextParser {
                     command = "examine";
                     result.add(command);
                     result.add(remainingWords);
+                    return result;
                 } 
             }
+            
+            //Parsing words for checking inventory without examine command
+            if(words.size()==1 && (words.get(0).equals("inventory") || words.get(0).equals("i"))){
+                remainingWordsindex = 0;
+                command = "examine";
+                result.add(command);
+                result.add("inventory");
+                return result;
+            }
 
+            //MOVE
             //Parsing the words for the move command
-            if(moveActions.stream().anyMatch(s -> s.equals(words.get(0))) && words.get(1).equals("to")){
+            //Parsing words for one word commands for moving
+            if(words.size()==1 && directions.contains(words.get(0))){
+                remainingWordsindex = 0;
+                foundMoveWords = true;
+            }
+
+            if(moveActions.contains(words.get(0)) && words.get(1).equals("to")){
                 remainingWordsindex = 2;
-                foundMovewords = true;
+                foundMoveWords = true;
                 
             }
-            else if (moveActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            else if (moveActions.contains(words.get(0))) {
                 remainingWordsindex = 1;
-                foundMovewords = true;
+                foundMoveWords = true;
                 
             }
 
 
-            if(foundMovewords == true){
+            if(foundMoveWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -112,23 +132,25 @@ public class TextParser {
                     command = "move";
                     result.add(command);
                     result.add(remainingWords);
+                    return result; 
                 } 
             }
 
+            //TALK
             //Parsing the words for the talk command
-            if(talkActions.stream().anyMatch(s -> s.equals(words.get(0))) && (words.get(1).equals("to") || words.get(1).equals("with"))){
+            if(talkActions.contains(words.get(0)) && (words.get(1).equals("to") || words.get(1).equals("with"))){
                 remainingWordsindex = 2;
-                foundTalkwords = true;
+                foundTalkWords = true;
                 
             }
-            else if (talkActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            else if (talkActions.contains(words.get(0))) {
                 remainingWordsindex = 1;
-                foundTalkwords = true;
+                foundTalkWords = true;
                 
             }
 
 
-            if(foundTalkwords == true){
+            if(foundTalkWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -141,22 +163,24 @@ public class TextParser {
                     command = "talk";
                     result.add(command);
                     result.add(remainingWords);
+                    return result;
                 } 
             }
 
+            //TAKE
             //Parsing the words for the take command
-            if (takeActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            if (takeActions.contains(words.get(0))) {
                 remainingWordsindex = 1;
-                foundTakewords = true;
+                foundTakeWords = true;
                 
             }
             if(words.get(0).equals("pick") && words.get(1).equals("up")){
                 remainingWordsindex = 2;
-                foundTakewords = true;
+                foundTakeWords = true;
                 
             }
 
-            if(foundTakewords == true){
+            if(foundTakeWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -170,23 +194,55 @@ public class TextParser {
                     command = "take";
                     result.add(command);
                     result.add(remainingWords);
+                    return result;
                 } 
             }
 
-            //Parsing the words for the combat command
-            if(combatActions.stream().anyMatch(s -> s.equals(words.get(0))) && words.get(1).equals("with")){
-                remainingWordsindex = 2;
-                foundCombatwords = true;
-                
-            }
-            else if (combatActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            //DROP
+            //Parsing the words for the drop command
+            if (words.get(0).equals("drop")) {
                 remainingWordsindex = 1;
-                foundCombatwords = true;
+                foundDropWords = true;
+                
+            }
+            if((words.get(0).equals("set") || words.get(0).equals("put")) && words.get(1).equals("down")){
+                remainingWordsindex = 2;
+                foundDropWords = true;
+                
+            }
+
+            if(foundDropWords == true){
+                if (words.size() > remainingWordsindex){
+                    remainingWords = "";
+                    for(int i = remainingWordsindex; i < words.size(); i++){
+                        remainingWords += words.get(i);
+                        //for objects/nouns with more than one word (e.g. book of spells)
+                        if (i < words.size() - 1){
+                            remainingWords += " ";
+                        }
+                    }
+                    command = "drop";
+                    result.add(command);
+                    result.add(remainingWords);
+                    return result;
+                } 
+            }
+
+            //COMBAT
+            //Parsing the words for the combat command
+            if(combatActions.contains(words.get(0)) && words.get(1).equals("with")){
+                remainingWordsindex = 2;
+                foundCombatWords = true;
+                
+            }
+            else if (combatActions.contains(words.get(0))) {
+                remainingWordsindex = 1;
+                foundCombatWords = true;
                 
             }
 
 
-            if(foundCombatwords == true){
+            if(foundCombatWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -200,17 +256,19 @@ public class TextParser {
                     command = "combat";
                     result.add(command);
                     result.add(remainingWords);
+                    return result;
                 } 
             }
 
+            //USE
             //Parsing the words for the use command
             if(words.get(0).equals("use")){
                 remainingWordsindex = 1;
-                foundUsewords = true;
+                foundUseWords = true;
                 
             }
 
-            if(foundUsewords == true){
+            if(foundUseWords == true){
                 if (words.size() > remainingWordsindex){
                     remainingWords = "";
                     for(int i = remainingWordsindex; i < words.size(); i++){
@@ -223,45 +281,38 @@ public class TextParser {
                     command = "use";
                     result.add(command);
                     result.add(remainingWords);
+                    return result;
                 } 
-            }                      
+            }             
 
+            //YES
             //Parsing the words for the yes command
-            if (yesActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            if (yesActions.contains(words.get(0))) {
                 
                 command = "yes";
                 result.add(command);
+                return result;
             }
 
+            //NO
             //Parsing the words for the no command
-            if (noActions.stream().anyMatch(s -> s.equals(words.get(0)))) {
+            if (noActions.contains(words.get(0))) {
                 
                 command = "no";
                 result.add(command);
+                return result;
             }
 
+            //QUIT
             //Parsing the words for the quit command
-            if(quitActions.stream().anyMatch(s -> s.equals(words.get(0)))){
+            if(quitActions.contains(words.get(0))){
                 remainingWordsindex = 1;
-                foundQuitwords = true;
+                foundQuitWords = true;
+                command = "quit";
+                result.add(command);
+                return result;
                 
             }
-        
-            if(foundQuitwords == true){
-                if (words.size() > remainingWordsindex){
-                    remainingWords = "";
-                    for(int i = remainingWordsindex; i < words.size(); i++){
-                        remainingWords += words.get(i);
-                        //for objects/nouns with more than one word (e.g. book of spells)
-                        if (i < words.size() - 1){
-                            remainingWords += " ";
-                        }
-                    }
-                    command = "quit";
-                    result.add(command);
-                    result.add(remainingWords);
-                } 
-            } 
 
         }
 

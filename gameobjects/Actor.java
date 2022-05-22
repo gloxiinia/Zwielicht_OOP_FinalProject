@@ -2,13 +2,13 @@ package gameobjects;
 
 import java.util.ArrayList;
 
-public class Actor extends Thing {
+public class Actor extends ThingHolder {
     private String dialogue;
     private Scene scene;
     private ArrayList<String> dialogueList = new ArrayList<>();
     
-    public Actor(String aName, String aDescription, String anExamination, Scene aScene){
-        super(aName, aDescription, anExamination);
+    public Actor(String aName, String aDescription, String anExamination, Scene aScene, ThingList tl){
+        super(aName, aDescription, anExamination, tl);
         this.scene = aScene;
     }
 
@@ -21,5 +21,6 @@ public class Actor extends Thing {
     public Scene getScene(){
         return this.scene;
     }
+
 
 }
