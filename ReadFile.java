@@ -12,11 +12,11 @@ import gameobjects.ThingList;
 
 public class ReadFile {
 
-    public static ArrayList<Item> createItems(){
+    public static ThingList createItems(){
         try{
             BufferedReader reader = new BufferedReader(new FileReader("TestItems.txt"));
             String line = reader.readLine();
-            ArrayList<Item> items = new ArrayList<Item>();
+            ThingList items = new ThingList();
 
             while(!line.equals("ENDOFFILE")){
                 //item name
@@ -77,7 +77,7 @@ public class ReadFile {
 
     public static ArrayList<Scene> createScenes(){
 
-        ArrayList<Item> allItems = createItems();
+        ThingList allItems = createItems();
 
         try{
             BufferedReader reader = new BufferedReader(new FileReader("TestScenes.txt"));
@@ -119,12 +119,11 @@ public class ReadFile {
                 }
 
                 ThingList sceneItems = new ThingList();
-                for(Item i : allItems){
+                for(Thing i : allItems){
                     if(i.getLocation() == numIndex ){
                         sceneItems.add(i);
                     }
                 }
-
                 Scene aScene = new Scene(name, description, examination, n, s, e, w, sceneItems);
                 scenes.add(aScene);
 
@@ -150,10 +149,8 @@ public class ReadFile {
             System.out.println(i.getDescription());
             System.out.println(i.getExamination());
             ThingList k = i.getThings();
-            System.out.println(k.thisItem("pistol with a silencer"));
-            System.out.println(k.thisItem("gun"));
-            System.out.println(k.thisItem("book on mythology"));
-            System.out.println(k.thisItem("gun").isThingKey());
+            System.out.println(k.describeThings());
+
         }
 
 

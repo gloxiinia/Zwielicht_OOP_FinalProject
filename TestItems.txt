@@ -15,9 +15,9 @@ open book,mythology book,myth book,book about mythology,book about myths
 A fairly thick book on the various mythos around the world. It's open and 
 looks recently read.
 PICKUP
+true
+true
 false
-true
-true
 The page was opened on the section regarding Greek and Roman myths.
 there are highlights on the page about Apollo.
 END

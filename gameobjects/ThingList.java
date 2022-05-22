@@ -1,6 +1,7 @@
 package gameobjects;
 
 import java.util.ArrayList;
+import globals.Methods;
 
 public class ThingList extends ArrayList<Thing> {
     //return the list + description of each item in the ThingList
@@ -10,15 +11,28 @@ public class ThingList extends ArrayList<Thing> {
             s = "There's nothing here, it's empty.";
         }else{
             for(Thing i: this){
-                s += s + i.getName() + ": \n" + i.getDescription() + '\n';
+                s += s + Methods.capitalizeString(i.getName()) + ": \n" + i.getDescription() + '\n';
             }
         }
 
         return s;
     }
 
+    public ArrayList<String> allThingNamesList(ThingList ItemList){
+        ArrayList<String> allItemNames = new ArrayList<>();
+        ArrayList<String> thingAliases = new ArrayList<>();
+        for(Thing t : ItemList){
+            allItemNames.add(t.getName());
+            thingAliases = t.getAliases();
+            for(String alias : thingAliases){
+                allItemNames.add(alias);
+            }
+        }
+        return allItemNames;
+    }
+
     //return a specific thing
-    public Thing thisItem(String aName){
+    public Thing thisThing(String aName){
         Thing something = null;
         String thingName = "";
         ArrayList<String> thingAliases;

@@ -12,19 +12,60 @@ import gameobjects.Scene;
 import gameobjects.Thing;
 import gameobjects.ThingList;
 import globals.Direction;
+import globals.Methods;
 
 
 
 public class Game {
 
-        //Testing
+        //Creating the needed assets
         private ArrayList<Scene> map; 
+        private ArrayList<String> allItemNames;
+        private ThingList allItems;
+        private ArrayList<String> sceneNames;
         private Actor player;
-        List<String> commands = new ArrayList<>(Arrays.asList("examine", "move", "talk", "take", "use", "yes", "no", "quit"));
+        List<String> commands = new ArrayList<>(Arrays.asList("examine", "move", "talk", "take", "drop", "use", "yes", "no", "quit"));
         List<String> directions = new ArrayList<>(Arrays.asList("north", "south", "east", "west"));
+        List<String> miscNouns = new ArrayList<>(Arrays.asList("inventory", "i", "around"));
 
         //methods to run the intended commands
         //EXAMINING
+        private String examineItem(String itemName){
+            String msg = "";
+            Thing aSceneItem = getPlayer().getScene().getThings().thisThing(itemName);
+            Thing anInventoryItem = getPlayer().getThings().thisThing(itemName);
+
+            //flags for whether a sceneitem or aninventoryitem is found
+            boolean sceneItemFound = true;
+            boolean inventoryItemFound = true;
+
+            //checking inventory
+            if((itemName.equals("inventory") || itemName.equals("i"))){ // check the i command
+                showInventory();
+
+            }
+            //examining the active scene
+            else if(itemName.equals("around")){
+                msg = getPlayer().getScene().getExamination();
+
+            }
+            else if(anInventoryItem == null){
+                msg = "There's nothing named " + itemName + " in your inventory.";
+                inventoryItemFound = false;
+            }
+            else if(aSceneItem == null){
+                msg = "There's nothing named " + itemName + " in this location.";
+                sceneItemFound = false;
+            }
+            if (!sceneItemFound && inventoryItemFound){
+                msg = anInventoryItem.getExamination();
+            }
+            if(sceneItemFound && !inventoryItemFound){
+                msg = aSceneItem.getExamination();
+            }
+            
+            return msg;
+        }
 
         //TAKING AND DROPPING
         private void transferItem(Thing aThing, ThingList fromList, ThingList toList){
@@ -33,17 +74,22 @@ public class Game {
 
         }
 
+        private void showInventory(){
+            System.out.println("-----------------INVENTORY-----------------\n");
+            System.out.println(getPlayer().getThings().describeThings());
+        }
+
         public String takeItem(String itemName){
             String msg = "";
-            Thing t = player.getScene().getThings().thisItem(itemName);
+            Thing t = getPlayer().getScene().getThings().thisThing(itemName);
             if (itemName.equals("")){
                 itemName = "nothing";
             }if(t == null){
-                msg = "There's nothing named " + itemName + "in here.";
+                msg = "There's nothing named " + itemName + " in here.";
             }else{
                 if(t.isThingPickupable() == true){
                     transferItem(t, player.getScene().getThings(), player.getThings());
-                    msg =  itemName + " has been taken.";
+                    msg =  Methods.capitalizeString(itemName) + " has been taken.";
                 }else{
                     msg = "I don't think you can pick that up.";
                 }
@@ -54,15 +100,15 @@ public class Game {
 
         public String dropItem(String itemName){
             String msg = "";
-            Thing t = player.getScene().getThings().thisItem(itemName);
+            Thing t = getPlayer().getThings().thisThing(itemName);
             if (itemName.equals("")){
-                itemName = "You have to *name* the object. I can't read your mind.";
+                msg = "You have to *name* the object. I can't read your mind.";
             }if(t == null){
-                msg = "There's nothing named " + itemName + "in your inventory.";
+                msg = "There's nothing named " + itemName + " in your inventory.";
             }else{
                 if(t.isThingKey() == false){
                     transferItem(t, player.getThings(), player.getScene().getThings());
-                    msg =  itemName + " has been dropped.";
+                    msg =  Methods.capitalizeString(itemName) + " has been dropped.";
                 }else{
                     msg = "I don't think you should drop that.";
                 }
@@ -89,9 +135,13 @@ public class Game {
             moveHandler(movePlayerTo(Direction.EAST));
         }
 
+        //constructor
         public Game(){
             //creating the game map by reading the Scenes file
             this.map = ReadFile.createScenes();
+            this.allItems = ReadFile.createItems();
+            this.allItemNames = allItems.allThingNamesList(allItems);
+            this.sceneNames = getAllSceneNames();
             ThingList playerInventory = new ThingList();
             player = new Actor("player", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerInventory);
             
@@ -135,7 +185,7 @@ public class Game {
                 Scene activeScene = getPlayer().getScene();
                 msg = "You are now in the " + activeScene.getName() + ". " + '\n'+ activeScene.getDescription();
             }
-            System.out.println(msg);
+            System.out.print(msg);
         }
 
 
@@ -150,10 +200,21 @@ public class Game {
             
         }
 
+        //method to return the player object
         public Actor getPlayer() {
             return player;
         }
 
+        //method to return each of the scene's names
+        public ArrayList<String> getAllSceneNames(){
+            ArrayList<String> allSceneNames = new ArrayList<>();
+            for(Scene s : this.map){
+                allSceneNames.add(s.getName().toLowerCase());
+            }
+            return allSceneNames;
+        }
+
+        //Might delete
         public void printMap(){
             for(int i = 0; i < this.map.size(); i++){
                 System.out.println(this.map.get(i).getName());
@@ -170,7 +231,9 @@ public class Game {
                 System.out.println(s.getThings());
             }
         }
+        //Might Delete
 
+        //method for processing one word commands
         public String ProcessVerb(List<String> wordList){
             String verb;
             String msg = "";
@@ -185,6 +248,7 @@ public class Game {
             return msg;
         }
 
+        //method for processing two word commands
         public String ProcessVerbNoun(List<String> wordlist){
             String verb;
             String noun;
@@ -195,7 +259,7 @@ public class Game {
             if(!commands.contains(verb)){
                 msg = "You either made a typo, or " + verb +" isn't a recognized action.\n";
                 error = true;
-            }if(!directions.contains(noun)){
+            }if(!allItemNames.contains(noun) && !directions.contains(noun) && !miscNouns.contains(noun)){
                 msg += "You either made a typo, or " + noun + " isn't a recognized noun.\n";
                 error = true;
             }if(!error){
@@ -218,7 +282,7 @@ public class Game {
                             break;
                     }
                 }if(verb.equals("examine")){ //processing examine commands
-    
+                    msg = examineItem(noun);
                 }if(verb.equals("talk")){ //processing talk commands
     
                 }if(verb.equals("take")){ //processing take commands
@@ -229,8 +293,6 @@ public class Game {
 
                 }if(verb.equals("use")){ //processing use commands
     
-                }else{
-                    msg += " isn't implemented yet.";
                 }
             }
 
@@ -251,19 +313,19 @@ public class Game {
 
 
             Game works = new Game();
-            works.printMap();
-            works.printSceneObjects();
             BufferedReader in;
             String input;
             List<String> outputs;
             String output;
             in = new BufferedReader(new InputStreamReader(System.in));
             do {
+                System.out.println();
                 System.out.print("> ");
                 input = in.readLine();
                 input = TextParser.FilterDelims(input);
                 outputs = TextParser.parseInput(input);
                 output = works.RunCommand(outputs);
+                System.out.println(output);
             } while (!"q".equals(input));
 
         }

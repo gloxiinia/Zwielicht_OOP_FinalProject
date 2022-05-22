@@ -7,14 +7,10 @@ public class Thing {
 
     private String name, description, examination;
     private boolean isPickupable, isUsable, isKeyItem;
+    private int location;
     private ArrayList<String> aliases = new ArrayList<>();
 
     //constructor method
-    public Thing(){
-        this.name = "[REDACTED]";
-        this.description = "[CLASSIFIED]";
-        this.examination = "[HIGHER LEVEL ACCESS REQUIRED]";
-    }
 
     public Thing(String name, String description, String examination){
         this.name = name;
@@ -30,7 +26,7 @@ public class Thing {
     }
 
     //constructor for Items
-    public Thing(String name, String description, String examination, ArrayList<String> aliases, boolean isPickupable, boolean isUsable, boolean isKeyItem){
+    public Thing(String name, String description, String examination, int aLocation, ArrayList<String> aliases, boolean isPickupable, boolean isUsable, boolean isKeyItem){
         this.aliases = aliases;
         this.name = name;
         this.description = description;
@@ -38,6 +34,7 @@ public class Thing {
         this.isPickupable = isPickupable;
         this.isUsable = isUsable;
         this.isKeyItem = isKeyItem;
+        this.location = aLocation;
     }
 
     //setters
@@ -92,6 +89,10 @@ public class Thing {
 
     public boolean isThingKey(){
         return isKeyItem;
+    }
+
+    public int getLocation(){
+        return this.location;
     }
 
 
