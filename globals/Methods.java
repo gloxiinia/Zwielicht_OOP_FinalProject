@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import gameobjects.Scene;
 
 
-public class Methods {
+public class Methods implements java.io.Serializable{
     public static String capitalizeString(String lower){
         String output = lower.substring(0, 1).toUpperCase()  + lower.substring(1);
         return output;

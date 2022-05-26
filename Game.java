@@ -1,6 +1,5 @@
-import java.io.BufferedReader;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +15,7 @@ import globals.Methods;
 
 
 
-public class Game {
+public class Game implements java.io.Serializable{
 
         //Creating the needed assets
         private ArrayList<Scene> map; 
@@ -28,8 +27,22 @@ public class Game {
         List<String> directions = new ArrayList<>(Arrays.asList("north", "south", "east", "west"));
         List<String> miscNouns = new ArrayList<>(Arrays.asList("inventory", "i", "around"));
 
-        //methods to run the intended commands
-        //EXAMINING
+        //constructor
+        public Game(){
+            //creating the game map by reading the Scenes file
+            this.map = ReadFile.createScenes();
+            this.allItems = ReadFile.createItems();
+            this.allItemNames = allItems.allThingNamesList(allItems);
+            this.sceneNames = getAllSceneNames();
+            ThingList playerInventory = new ThingList();
+            player = new Actor("player", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerInventory);
+           
+        }
+       
+
+        //methods to run the intended commandS
+
+        //EXAMINING-----------------------------------------------------------------------
         private String examineItem(String itemName){
             String msg = "";
             Thing aSceneItem = getPlayer().getScene().getThings().thisThing(itemName);
@@ -66,8 +79,9 @@ public class Game {
             
             return msg;
         }
+        //EXAMINE END----------------------------------------------------------------------
 
-        //TAKING AND DROPPING
+        //TAKING AND DROPPING--------------------------------------------------------------
         private void transferItem(Thing aThing, ThingList fromList, ThingList toList){
             fromList.remove(aThing);
             toList.add(aThing);
@@ -108,7 +122,7 @@ public class Game {
             }else{
                 if(t.isThingKey() == false){
                     transferItem(t, player.getThings(), player.getScene().getThings());
-                    msg =  Methods.capitalizeString(itemName) + " has been dropped.";
+                    msg =  "\n" + Methods.capitalizeString(itemName) + " has been dropped.";
                 }else{
                     msg = "I don't think you should drop that.";
                 }
@@ -117,6 +131,9 @@ public class Game {
             return msg;
         }
 
+        //TAKING AND DROPPING END--------------------------------------------------------------
+
+        
         //MOVEMENT
         //methods for moving the player around the map
         private void goN() {
@@ -133,18 +150,6 @@ public class Game {
     
         private void goE() {
             moveHandler(movePlayerTo(Direction.EAST));
-        }
-
-        //constructor
-        public Game(){
-            //creating the game map by reading the Scenes file
-            this.map = ReadFile.createScenes();
-            this.allItems = ReadFile.createItems();
-            this.allItemNames = allItems.allThingNamesList(allItems);
-            this.sceneNames = getAllSceneNames();
-            ThingList playerInventory = new ThingList();
-            player = new Actor("player", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerInventory);
-            
         }
 
         //method to move an Actor (NPC, PC) to a scene
@@ -310,23 +315,9 @@ public class Game {
         // Main driver method
         public static void main(String[] args) throws IOException
         {
+            
 
 
-            Game works = new Game();
-            BufferedReader in;
-            String input;
-            List<String> outputs;
-            String output;
-            in = new BufferedReader(new InputStreamReader(System.in));
-            do {
-                System.out.println();
-                System.out.print("> ");
-                input = in.readLine();
-                input = TextParser.FilterDelims(input);
-                outputs = TextParser.parseInput(input);
-                output = works.RunCommand(outputs);
-                System.out.println(output);
-            } while (!"q".equals(input));
 
         }
 }

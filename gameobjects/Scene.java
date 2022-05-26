@@ -1,6 +1,6 @@
 package gameobjects;
 
-public class Scene extends ThingHolder {
+public class Scene extends ThingHolder{
 
     private int north, south, east, west;
 

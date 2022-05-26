@@ -303,6 +303,43 @@ public class TextParser {
                 return result;
             }
 
+            //SAVING
+            //Parsing the words for the save game
+            //save game, save progress, save 
+            if(words.size() == 1 && (words.get(0).equals("save"))){
+                command = "save";
+                result.add(command);
+                return result;
+            }
+
+            if(words.get(0).equals("save") && (words.get(1).equals("game") || words.get(1).equals("progress"))){
+                command = "save";
+                result.add(command);
+                return result;
+            }
+
+
+            //LOADING
+            //Parsing the words for the load game command
+            //load game, load progress, continue save, load
+            if(words.size() == 1 && (words.get(0).equals("load"))){
+                command = "load";
+                result.add(command);
+                return result;
+            }
+
+            if(words.size() == 2 && words.get(0).equals("load") && (words.get(1).equals("progress") || words.get(1).equals("game") || words.get(1).equals("save"))){
+                command = "load";
+                result.add(command);
+                return result;
+            }
+
+            if(words.size() == 2 &&  words.get(0).equals("continue") && (words.get(1).equals("progress") || words.get(1).equals("save") || words.get(1).equals("game"))){
+                command = "load";
+                result.add(command);
+                return result;
+            }
+            
             //QUIT
             //Parsing the words for the quit command
             if(quitActions.contains(words.get(0))){
@@ -317,6 +354,13 @@ public class TextParser {
         }
 
         return result; 
+    }
+
+    public static List<String> processInput(String input){
+        List<String> parsed;
+        input = FilterDelims(input).trim();
+        parsed = parseInput(input);
+        return parsed;
     }
 
     public static void main(String[] args) throws IOException{

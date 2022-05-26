@@ -2,7 +2,7 @@ package gameobjects;
 
 import java.util.ArrayList;
 
-public class Thing {
+public class Thing implements java.io.Serializable{
     //Thing object that will be the superclass to all other game objects
 
     private String name, description, examination;
