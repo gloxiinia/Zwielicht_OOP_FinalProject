@@ -9,12 +9,18 @@ public class Methods implements java.io.Serializable{
         return output;
     }
 
-    //public String getAllSceneNames(ArrayList<Scene> sceneList){
-
-
-        
-    //}
-
+    
+    public static void typewriterEffect(String word){
+        int i;
+        for(i = 0; i < word.length(); i++){
+            System.out.printf("%c", word.charAt(i));
+            try{
+                Thread.sleep(100);//0.1s pause between characters
+            }catch(InterruptedException ex){
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
 
     public void printsceneList(ArrayList<Scene> sceneList){
         for(int i = 0; i < sceneList.size(); i++){
@@ -32,4 +38,7 @@ public class Methods implements java.io.Serializable{
             System.out.println(s.getThings());
         }
     }
+
+
+    
 }

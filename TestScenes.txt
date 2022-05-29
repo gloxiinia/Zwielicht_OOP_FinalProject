@@ -1,23 +1,33 @@
-Office
+West Hallway
 0
-1,-1,2,-1
-The crime scene, you've been called here through an anonymous source.
+-1,-1,-1,1
+The west hallway of the estate. The tiles are practically seared into my brain
+with how many times you've had to come to *his* office.
 EXAMINE
-Nothing much to see here, besides the dead body, of course.
+To the north are the restrooms. To the south... someone's office. To the east 
+is back to the central hall, and west is.. well. Edelmar's office.
 END
-Balcony
+Edelmar's Office
 1
--1,0,-1,-1
+2,3,0,-1
 A balcony connected to the office. You can see the city skyline from out here.
 EXAMINE
 Calm, no winds right now. There's a broken pot near the railing.
 END
-Library
+Edelmar's Private Garden
 2
--1,-1,-1,0
-A sizable library for a penthouse. It's got at least 20 rows of bookshelves, 
+-1,1,-1,-1
+Edel's private (debatable) garden. He grows some interesting things here. I think
+I saw orchids blooming next to an actual corpse flower.
+EXAMINE
+The only exit here is back into Edel's office.
+END
+Edelmar's Private, Very Sh-Sh, Library
+3
+1,-1,-1,-1
+A pretty modest library, for someone who owns a literal manor. It's got around 3 rows of bookshelves, 
 ranging from entomology to microbiology.
 EXAMINE
-Someone's sitting by the table, book in hand.
+The only exit here is back into the office.
 END
 ENDOFFILE

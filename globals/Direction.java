@@ -1,7 +1,7 @@
 package globals;
 
 //enumerated type to make reading the code easier
-public enum Direction implements java.io.Serializable{
+public enum Direction{
     NORTH,
     SOUTH,
     EAST,

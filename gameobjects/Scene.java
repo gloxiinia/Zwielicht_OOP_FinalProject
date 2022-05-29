@@ -2,14 +2,15 @@ package gameobjects;
 
 public class Scene extends ThingHolder{
 
-    private int north, south, east, west;
+    private int north, south, east, west, visits;
 
-    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl){
+    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, int visits){
         super(aName, aDescription, anExamination, tl);
         this.north = n;
         this.south = s;
         this.east = e;
         this.west = w;
+        this.visits = visits;
     }
 
     //setters
@@ -31,6 +32,11 @@ public class Scene extends ThingHolder{
         this.west = west;
     }
 
+    public void addVisit(){
+        this.visits++;
+    }
+
+
     //getters
     public int getNorth(){
         return this.north;
@@ -48,5 +54,7 @@ public class Scene extends ThingHolder{
         return this.west;
     }
 
-
+    public int getVisits(){
+        return this.visits;
+    }
 }

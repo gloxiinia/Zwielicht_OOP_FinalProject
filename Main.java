@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,8 +32,7 @@ public class Main {
 
     static Game game;
 
-    //method for creating a new player save folder
-    
+    //method for checking if a save file exists 
     private static boolean checkSaveExists(String playerName, String saveName) {
         boolean exists;
         File file = new File("gamesaves/" + playerName + "/" + saveName + ".sav");
@@ -48,7 +44,7 @@ public class Main {
         return exists;
         
     }
-
+    //method for checking if a player folder exists
     private static boolean checkFolderExists(String playerName) {
         boolean folderExist;
         File folder = new File("gamesaves/" + playerName);
@@ -61,6 +57,7 @@ public class Main {
 
     }
 
+    //method for deleting a player folder
     private static void deleteFolder(String playerName) {
 
         File folder = new File("gamesaves/" + playerName);
@@ -68,10 +65,33 @@ public class Main {
 
     }
 
+    //method for deleting a save file
     private static void deleteSave(String playerName, String saveName) {
 
-        File folder = new File("gamesaves/" + playerName);
+        File folder = new File("gamesaves/" + playerName + "/" + saveName + ".sav") ;
         folder.delete();
+
+    }
+
+    //method for formatting string to lower case and trimmed
+    private static String lowerTrim(String word){
+        return word.trim().toLowerCase();
+    }
+
+    //method for getting the last time a file was modified
+    private static String getLastFileModified(String playerName, String saveName){
+        File file = new File("gamesaves/" + playerName + "/" + saveName + ".sav");
+        long lastModified = file.lastModified();
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
+        String formattedDate = date.format(myDateFormatter);
+        return formattedDate;
+
+    }
+
+    //method for getting the current local date/time
+    private static String currentDateTime(){
+        LocalDateTime dateNow = LocalDateTime.now();
+        return dateNow.format(myDateFormatter);
 
     }
 
@@ -201,24 +221,13 @@ public class Main {
         }
     }
 
-    private static String lowerTrim(String word){
-        return word.trim().toLowerCase();
-    }
-
-    private static String getLastFileModified(String playerName, String saveName){
-        File file = new File("gamesaves/" + playerName + "/" + saveName + ".sav");
-        long lastModified = file.lastModified();
-        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault());
-        String formattedDate = date.format(myDateFormatter);
-        return formattedDate;
+    public static void showIntro(){
+    
+        
 
     }
 
-    private static String currentDateTime(){
-        LocalDateTime dateNow = LocalDateTime.now();
-        return dateNow.format(myDateFormatter);
 
-    }
 
 
 
@@ -229,7 +238,7 @@ public class Main {
         // the desired color
         //System.out.println(ANSI_RED + "This text is red" + ANSI_RESET + " this text is not");
 
-
+        showIntro();
 
         game = new Game();
         String input;
@@ -242,6 +251,7 @@ public class Main {
             input = in.readLine();
             outputs = TextParser.processInput(input);
             System.out.println();
+
             switch (outputs.get(0)) {
                 case "save":
                     processSave();
@@ -253,8 +263,15 @@ public class Main {
                     output = game.RunCommand(outputs);
                     break;
             }
+            if(game.getPlayer().getLocation() + 1 == 1 && game.getPlayer().getScene().getVisits() == 1){
+                System.out.println("This is your first visit to this room.");
+                game.EdelmarScene(1);
+            }
+            System.out.println( game.getPlayer().getScene().getVisits() );
+            System.out.println( game.getPlayer().getLocation());
+            
             System.out.println(output);
-        } while (!"q".equals(input));
+        } while (!"quit".equals(outputs.get(0)));
      }
 
 }

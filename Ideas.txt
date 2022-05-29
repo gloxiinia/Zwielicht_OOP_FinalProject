@@ -1,0 +1,48 @@
+West Restrooms
+4
+-1,0,-1,-1
+The west restrooms. What more is there to say?
+EXAMINE
+Only exit's back into the hallway.
+END
+Someone's Office
+5
+0,-1,-1,-1
+It's an office, for someone you don't know... Maybe you shouldn't be in here.
+(Never stopped you before though)
+EXAMINE
+There's noone here. Exit goes back to the hallway.
+END
+Public Library
+6
+-1,7,-1,-1
+The estate's pride and joy. Housing seemingly all printed media ever made. It's no
+wonder there's always someone coming and going from here.
+EXAMINE
+There's an exit back into the hallway.
+END
+Central Hall
+7
+6,8,9,0
+The central hall. Not unlike a sort of hub for the other employees.
+EXAMINE
+You can head into the west hallway or east hallway. To the south is the dining hall
+and to the north is the public library. 
+END
+Dining Hall
+8
+7,-1,-1,-1
+Communal dining hall. There's the smell of something spicy.
+EXAMINE
+You can head back into the hallway by going north.
+END
+East Hallway
+9
+-1,-1,-1,7
+The east hallway. If you'd followed the path, you'd end up in the east wing.
+EXAMINE
+You can head east to the central hall.
+END
+
+Tell the player to look around in other rooms before going into the office
+Emphasize that after entering the office, you will have to play out the dialogue to its finish

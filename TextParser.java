@@ -364,7 +364,7 @@ public class TextParser {
     }
 
     public static void main(String[] args) throws IOException{
-
+        
         Scanner in;
         String input;
         List<String> output;

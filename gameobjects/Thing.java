@@ -25,6 +25,15 @@ public class Thing implements java.io.Serializable{
         this.examination = examination;
     }
 
+    //constructor for NPCs
+    public Thing(String name, String description, String examination, int location, ArrayList<String> aliases){
+        this.aliases = aliases;
+        this.name = name;
+        this.description = description;
+        this.examination = examination;
+        this.location = location;
+    }
+
     //constructor for Items
     public Thing(String name, String description, String examination, int aLocation, ArrayList<String> aliases, boolean isPickupable, boolean isUsable, boolean isKeyItem){
         this.aliases = aliases;

@@ -1,11 +1,16 @@
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
 import gameobjects.Actor;
+import gameobjects.Dialogue;
 import gameobjects.Item;
 import gameobjects.Scene;
 import gameobjects.Thing;
@@ -23,20 +28,121 @@ public class Game implements java.io.Serializable{
         private ThingList allItems;
         private ArrayList<String> sceneNames;
         private Actor player;
+        private Actor edelmar;
+        static ArrayList<Integer> nextList = new ArrayList<>();
         List<String> commands = new ArrayList<>(Arrays.asList("examine", "move", "talk", "take", "drop", "use", "yes", "no", "quit"));
         List<String> directions = new ArrayList<>(Arrays.asList("north", "south", "east", "west"));
         List<String> miscNouns = new ArrayList<>(Arrays.asList("inventory", "i", "around"));
 
         //constructor
         public Game(){
-            //creating the game map by reading the Scenes file
+            //creating the game map + a list of all scene names by reading the Scenes file
             this.map = ReadFile.createScenes();
+            this.sceneNames = getAllSceneNames();
+            //creating a list of all items + all item names by reading the Items file
             this.allItems = ReadFile.createItems();
             this.allItemNames = allItems.allThingNamesList(allItems);
-            this.sceneNames = getAllSceneNames();
+            //creating the player inventory
             ThingList playerInventory = new ThingList();
-            player = new Actor("player", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerInventory);
-           
+            //creating Edelmar's inventory
+            ThingList inventoryEd = new ThingList();
+            
+            ArrayList<String> dialogueEd = new ArrayList<>(Arrays.asList("Test1", "Test2"));
+            ArrayList<String> aliasesEd = new ArrayList<>(Arrays.asList("Edel", "El"));
+            ArrayList<String> playerAliases = new ArrayList<>(Arrays.asList("me", "myself", "I"));
+            player = new Actor("Vega", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerAliases, playerInventory);
+            edelmar = new Actor("edelmar", "aDescription", "anExamination", map.get(1) , 1, aliasesEd, inventoryEd,6 , 1, 4, 4, 0.25, -0.5, 0.75, -0.5);
+            
+            
+
+        }
+
+        //TESTING FOR DIALOGUE
+        public void startDialogueEdelmar(){
+            System.out.println("You've started dialogue with Edelmar.");
+            System.out.println("You know, when I said \"feel free to visit me whenever\", I didn't mean it literally.");
+
+        }
+
+        public String getSpecificLine(int lineNum, String fileName) throws IOException{
+            String line = Files.readAllLines(Paths.get(fileName)).get(lineNum - 1);
+            return line;
+        }
+    
+        public ArrayList<String> parseLine(String line){
+            ArrayList<String> splitLine = new ArrayList<>(Arrays.asList(line.split("@")));
+            splitLine.add(splitLine.get(splitLine.size()-1).trim());
+            return splitLine;
+        }
+    
+        public ArrayList<String> getnextDialogueLine(ArrayList<String> line){
+            ArrayList<String> nextDialogueLine = new ArrayList<>(Arrays.asList(line.get(line.size()-1).split(",")));
+            return nextDialogueLine;
+        }
+    
+        public void getDialogues(String aLine) throws NumberFormatException, IOException{
+            ArrayList<String> linkedDialogueList = parseLine(aLine);
+            String dialogue = linkedDialogueList.get(1);
+            ArrayList<String> nextDialogueLine = getnextDialogueLine(linkedDialogueList);
+            Dialogue myDialogue = new Dialogue();
+            myDialogue.setnextDialogueLine(nextDialogueLine);
+            myDialogue.setDialogue(dialogue);
+    
+            if(myDialogue.getFirstNextDialogue() != -1){
+                if(linkedDialogueList.get(0).equals("text")){
+                    nextList.clear();
+                    System.out.println(myDialogue.getDialogue());
+                    for(String number : myDialogue.getNextDialogueLine()){
+                        String nextLine = getSpecificLine(Integer.parseInt(number.trim()), "TestScene.txt");
+                        getDialogues(nextLine);
+                    }
+                }else{
+                    nextList.add(myDialogue.getFirstNextDialogue());
+                    System.out.println(nextList.size() + ". " + myDialogue.getDialogue());
+                }
+            }else{
+                nextList.clear();
+                System.out.println(myDialogue.getDialogue());
+                
+            }
+     
+        }
+    
+    
+        public void EdelmarScene(int count){
+            try{
+                BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
+                String nextLine = getSpecificLine(count, "TestScene.txt");
+                getDialogues(nextLine);
+                if(nextList.isEmpty()){
+                    System.out.println("THE END");
+                }else{
+                    
+                    System.out.print("> ");
+                    String choice = userReader.readLine();
+                    if(choice.equals("1")){
+                        count = nextList.get(0);
+                        //getDialogues(getSpecificLine(count, "TestScene.txt"));
+                    }else if(choice.equals("2")){
+                        count = nextList.get(1);
+                        //getDialogues(getSpecificLine(count, "TestScene.txt"));
+                    }else if(nextList.size() == 3 && choice.equals("3")){
+                        count = nextList.get(2);
+                        //getDialogues(getSpecificLine(count, "TestScene.txt"));
+                    }else{
+                        System.out.println("That's not a valid option.");
+                    }
+                    EdelmarScene(count);
+                }
+    
+    
+            } catch (IOException e){
+                System.out.println("File could not be accessed, try again!");
+            }
+        }
+    
+        public void endDialogue(){
+    
         }
        
 
@@ -54,7 +160,7 @@ public class Game implements java.io.Serializable{
 
             //checking inventory
             if((itemName.equals("inventory") || itemName.equals("i"))){ // check the i command
-                showInventory();
+                showInventory(getPlayer());
 
             }
             //examining the active scene
@@ -88,9 +194,9 @@ public class Game implements java.io.Serializable{
 
         }
 
-        private void showInventory(){
+        private void showInventory(Actor actor){
             System.out.println("-----------------INVENTORY-----------------\n");
-            System.out.println(getPlayer().getThings().describeThings());
+            System.out.println(actor.getThings().describeThings());
         }
 
         public String takeItem(String itemName){
@@ -188,7 +294,9 @@ public class Game implements java.io.Serializable{
                 msg = "You can't travel that way, sorry.\n";
             } else {
                 Scene activeScene = getPlayer().getScene();
-                msg = "You are now in the " + activeScene.getName() + ". " + '\n'+ activeScene.getDescription();
+                activeScene.addVisit();
+                msg = "You are now in " + activeScene.getName() + ". " + '\n'+ activeScene.getDescription();
+
             }
             System.out.print(msg);
         }
@@ -244,7 +352,7 @@ public class Game implements java.io.Serializable{
             String msg = "";
             verb = wordList.get(0);
             if(verb.equals("quit")){
-
+                msg += "Thank you for playing the game!";
             }if(verb.equals("yes")){
 
             }if(verb.equals("no")){
@@ -306,8 +414,13 @@ public class Game implements java.io.Serializable{
 
         //method to call the processVerbNoun method and run the player's intended command
         public String RunCommand(List<String> inputstr) {
-            String s;      
-            s = ProcessVerbNoun(inputstr);
+            String s;  
+            if(inputstr.size() == 2){
+                s = ProcessVerbNoun(inputstr);
+            }else{
+                s = ProcessVerb(inputstr);
+            }    
+            
             return s;
         }
 
