@@ -10,7 +10,7 @@ public class TextParser {
 
     //method to filter out any punctuation
     public static String FilterDelims(String input) {
-        String delims = " \t,.:;?!\"'><()[]{}-_=+&*%$#@~`";
+        String delims = " \t,.:;?!\"'><()[]{}/|-_=+&*%$#@~`";
         List<String> wordList = new ArrayList<>();
         StringTokenizer tokenizer = new StringTokenizer(input, delims);
         String t;
@@ -33,8 +33,8 @@ public class TextParser {
         boolean foundTalkWords = false;
         boolean foundTakeWords = false;
         boolean foundDropWords = false;
-        boolean foundCombatWords = false;
-        boolean foundUseWords = false;
+        //boolean foundCombatWords = false;
+        //boolean foundUseWords = false;
         boolean foundQuitWords = false;
 
         List<String> words = new ArrayList<>(Arrays.asList(command.split(" ")));
@@ -44,7 +44,7 @@ public class TextParser {
         List<String> moveActions = new ArrayList<>(Arrays.asList("move", "go", "walk", "travel"));
         List<String> talkActions = new ArrayList<>(Arrays.asList("talk", "chat"));
         List<String> takeActions = new ArrayList<>(Arrays.asList("take", "grab", "nab"));
-        List<String> combatActions = new ArrayList<>(Arrays.asList("fight", "battle", "duel"));
+        //List<String> combatActions = new ArrayList<>(Arrays.asList("fight", "battle", "duel"));
         List<String> yesActions = new ArrayList<>(Arrays.asList("yes", "correct", "y", "yeah", "yea", "yep", "mhm", "right", "true"));
         List<String> noActions = new ArrayList<>(Arrays.asList("no", "n", "nope", "wrong", "nuhuh", "nah", "incorrect", "false"));
         List<String> quitActions = new ArrayList<>(Arrays.asList("quit", "exit", "q"));
@@ -230,7 +230,7 @@ public class TextParser {
 
             //COMBAT
             //Parsing the words for the combat command
-            if(combatActions.contains(words.get(0)) && words.get(1).equals("with")){
+            /*if(combatActions.contains(words.get(0)) && words.get(1).equals("with")){
                 remainingWordsindex = 2;
                 foundCombatWords = true;
                 
@@ -258,11 +258,11 @@ public class TextParser {
                     result.add(remainingWords);
                     return result;
                 } 
-            }
+            }*/
 
             //USE
             //Parsing the words for the use command
-            if(words.get(0).equals("use")){
+            /*if(words.get(0).equals("use")){
                 remainingWordsindex = 1;
                 foundUseWords = true;
                 
@@ -283,7 +283,7 @@ public class TextParser {
                     result.add(remainingWords);
                     return result;
                 } 
-            }             
+            }      */       
 
             //YES
             //Parsing the words for the yes command
@@ -351,15 +351,36 @@ public class TextParser {
                 
             }
 
+
         }
 
         return result; 
     }
+    public static boolean isNumberChoiceValid(String input){
+        //listing the possible number inputs for dialogue choices (at max 3)
+        List<String> possibleChoices = new ArrayList<>(Arrays.asList("1","2","3"));
+        if(!possibleChoices.contains(input)){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    static boolean inputIsPositiveInteger(String input) {
+        String regex = "[0-9]+";
+        return input.matches(regex);
+    }
 
     public static List<String> processInput(String input){
-        List<String> parsed;
+        List<String> parsed = new ArrayList<>();
         input = FilterDelims(input).trim();
-        parsed = parseInput(input);
+        
+        if(!inputIsPositiveInteger(input)){
+            parsed = parseInput(input);
+        }else{
+            parsed.add(input);
+            return parsed;
+        }
         return parsed;
     }
 
@@ -374,7 +395,7 @@ public class TextParser {
             System.out.print("> ");
             input = in.nextLine();
             input = FilterDelims(input);
-            output = parseInput(input);
+            output = processInput(input);
             System.out.println(output);
         } while (output.stream().anyMatch(s -> !s.equals("quit")));
     }

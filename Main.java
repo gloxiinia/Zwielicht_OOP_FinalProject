@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -227,10 +228,6 @@ public class Main {
 
     }
 
-
-
-
-
     // Main driver method
     public static void main(String[] args) throws IOException
     {
@@ -243,6 +240,7 @@ public class Main {
         game = new Game();
         String input;
         String output = "";
+        String checkQuit = "";
         List<String> outputs;
 
 
@@ -251,27 +249,29 @@ public class Main {
             input = in.readLine();
             outputs = TextParser.processInput(input);
             System.out.println();
-
-            switch (outputs.get(0)) {
-                case "save":
-                    processSave();
-                    break;
-                case "load":
-                    processLoad();
-                    break;
-                default:
-                    output = game.RunCommand(outputs);
-                    break;
-            }
-            if(game.getPlayer().getLocation() + 1 == 1 && game.getPlayer().getScene().getVisits() == 1){
-                System.out.println("This is your first visit to this room.");
-                game.EdelmarScene(1);
-            }
-            System.out.println( game.getPlayer().getScene().getVisits() );
-            System.out.println( game.getPlayer().getLocation());
             
-            System.out.println(output);
-        } while (!"quit".equals(outputs.get(0)));
+            if(outputs.isEmpty()){
+                output = "I can't recognize that, sorry."; 
+
+            }else{
+                checkQuit = outputs.get(0); 
+                switch (outputs.get(0)) {
+                    case "save":
+                        processSave();
+                        break;
+                    case "load":
+                        processLoad();
+                        break;
+                    default:
+                        output = game.RunCommand(outputs);
+                        break;
+                }
+                //playing out the office scene
+
+            }
+            Methods.typewriterEffect(output);
+
+        } while (!"quit".equals(checkQuit));
      }
 
 }

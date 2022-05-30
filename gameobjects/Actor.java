@@ -1,22 +1,28 @@
 package gameobjects;
 
+import java.time.InstantSource;
 import java.util.ArrayList;
 
 public class Actor extends ThingHolder {
 
-    private int anger, fear, relation, happiness; 
-    double angerTendency, fearTendency, relationTendency, happinessTendency;
-    private Dialogue dialogue;
+    private double angerTendency, fearTendency, relationTendency, happinessTendency, anger, fear, relation, happiness; 
+    private ArrayList<String> inDialogueResponses = new ArrayList<>();
+    private String inDialogueWith;
     private Scene scene;
     private ArrayList<Dialogue> dialogueList = new ArrayList<>();
+    private boolean isInDialogue;
 
-    public Actor(String aName, String aDescription, String anExamination, Scene aScene, ArrayList<String> aliases, ThingList tl){
+    //constructor for player
+    public Actor(String aName, String aDescription, String anExamination, Scene aScene, ArrayList<String> aliases, ThingList tl, boolean isInDialogue, String inDialogueWith){
         super(aName, aDescription, anExamination, aliases, tl);
         this.scene = aScene;
+        this.isInDialogue = isInDialogue;
+        this.inDialogueWith = inDialogueWith;
     }
     
     public Actor(String aName, String aDescription, String anExamination, Scene aScene, int location, ArrayList<String> aliases, ThingList tl, 
-                    int anger, int fear, int relation, int happiness, double angerTendency, double fearTendency, double relationTendency, double happinessTendency){
+                    double anger, double fear, double relation, double happiness, double angerTendency, double fearTendency, double relationTendency, double happinessTendency, 
+                    ArrayList<String> inDialogueResponses){
         super(aName, aDescription, anExamination, location, aliases, tl);
         this.scene = aScene;
         this.anger = anger;
@@ -26,23 +32,30 @@ public class Actor extends ThingHolder {
         this.angerTendency = angerTendency;
         this.fearTendency = fearTendency;
         this.relationTendency = relationTendency;
+        this.inDialogueResponses = inDialogueResponses;
     }
 
     //setters
     public void setScene(Scene aScene){
         this.scene = aScene;
     }
-    public void setAnger(int anger){
-        this.anger = anger;
+    public void setAnger(int anger, double angerTendency){
+        this.anger = anger * angerTendency;
     }
-    public void setFear(int fear){
-        this.fear = fear;
+    public void setFear(int fear, double fearTendency){
+        this.fear = fear * fearTendency;
     }
-    public void setRelation(int relation){
-        this.relation = relation;
+    public void setRelation(int relation, double relationTendency){
+        this.relation = relation * relationTendency;
     }
-    public void setHappiness(int happiness){
-        this.happiness = happiness;
+    public void setHappiness(int happiness, double happinessTendency){
+        this.happiness = happiness * happinessTendency;
+    }
+    public void setIfActorIsInDialogue(boolean isInDialogue){
+        this.isInDialogue = isInDialogue;
+    }
+    public void setWhoActorInDialogueWith(String aName){
+        this.inDialogueWith = aName;
     }
 
 
@@ -51,21 +64,47 @@ public class Actor extends ThingHolder {
         return this.scene;
     }
 
-    public int getAnger(){
+    public double getAnger(){
         return this.anger;
     }
     
-    public int getFear(){
+    public double getFear(){
         return this.fear;
     }
     
-    public int getRelation(){
+    public double getRelation(){
         return this.relation;
     }
     
-    public int getHappiness(){
+    public double getHappiness(){
         return this.happiness;
     }
+
+    public boolean isActorInDialogue(){
+        return this.isInDialogue;
+    }
+
+    public String getExamineResponse(){
+        return this.inDialogueResponses.get(0);
+    }
+
+    public String getMoveResponse(){
+        return this.inDialogueResponses.get(1);
+    }
+
+    public String getTakeResponse(){
+        return this.inDialogueResponses.get(2);
+    }
+
+    public String getDropResponse(){
+        return this.inDialogueResponses.get(3);
+    }
+
+    public String getWhoActorInDialogueWith(){
+        return this.inDialogueWith;
+    }
+
+
 
 
 }

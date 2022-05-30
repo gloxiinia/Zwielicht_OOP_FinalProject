@@ -50,6 +50,9 @@ public class Thing implements java.io.Serializable{
     public void setName(String name){
         this.name = name;
     }
+    public void setLocation(int aLocation){
+        this.location = aLocation;
+    }
 
     public void setDescription(String description){
         this.description = description;

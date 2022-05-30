@@ -39,15 +39,15 @@ public class Test {
     }
 
     public static void getDialogues(String aLine) throws NumberFormatException, IOException{
-        ArrayList<String> linkedDialogueList = parseLine(aLine);
-        String dialogue = linkedDialogueList.get(1);
-        ArrayList<String> nextDialogueLine = getnextDialogueLine(linkedDialogueList);
+        ArrayList<String> splitDialogue = parseLine(aLine);
+        String dialogue = splitDialogue.get(1);
+        ArrayList<String> nextDialogueLine = getnextDialogueLine(splitDialogue);
         Dialogue myDialogue = new Dialogue();
         myDialogue.setnextDialogueLine(nextDialogueLine);
         myDialogue.setDialogue(dialogue);
 
         if(myDialogue.getFirstNextDialogue() != -1){
-            if(linkedDialogueList.get(0).equals("text")){
+            if(splitDialogue.get(0).equals("text")){
                 nextList.clear();
                 System.out.println(myDialogue.getDialogue());
                 for(String number : myDialogue.getNextDialogueLine()){
@@ -66,17 +66,49 @@ public class Test {
  
     }
 
+    public static String getDialogues2(String aLine, String previousMessage) throws NumberFormatException, IOException{
+        ArrayList<String> splitDialogue = parseLine(aLine);
+        String dialogue = splitDialogue.get(1);
+        ArrayList<String> nextDialogueLine = getnextDialogueLine(splitDialogue);
+        String msg;
+        Dialogue myDialogue = new Dialogue();
+        myDialogue.setnextDialogueLine(nextDialogueLine);
+        myDialogue.setDialogue(dialogue);
+        msg = previousMessage;
+
+        if(myDialogue.getFirstNextDialogue() != -1){
+            if(splitDialogue.get(0).equals("text")){
+                nextList.clear();
+                msg += myDialogue.getDialogue();
+                for(String number : myDialogue.getNextDialogueLine()){
+                    String nextLine = getSpecificLine(Integer.parseInt(number.trim()), "TestScene.txt");
+                    String test = getDialogues2(nextLine, msg);
+                }
+                
+            }else{
+                nextList.add(myDialogue.getFirstNextDialogue());
+                msg += nextList.size() + ". " + myDialogue.getDialogue();
+            }
+        }else{
+            nextList.clear();
+            msg += myDialogue.getDialogue();
+            
+        }
+        return msg;
+ 
+    }
+
 
     public static void EdelmarScene(int count){
         try{
             
             BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
             String nextLine = getSpecificLine(count, "TestScene.txt");
-            getDialogues(nextLine);
+            System.out.println(getDialogues2(nextLine, ""));
             if(nextList.isEmpty()){
                 System.out.println("THE END");
             }else{
-                
+
                 System.out.print("> ");
                 String choice = userReader.readLine();
                 if(choice.equals("1")){
@@ -109,8 +141,8 @@ public class Test {
         ThingList playerInventory = new ThingList();
         ArrayList<String> playerAliases = new ArrayList<>(Arrays.asList("me", "V", "myself", "I")); 
         ThingList inventoryEl = new ThingList();
-        Actor player = new Actor("Vega", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerAliases, playerInventory);
-        Actor Edelmar = new Actor("Edelmar", "aDescription", "anExamination", map.get(1) , 1, aliasesEl, inventoryEl,6 , 1, 4, 4, 0.25, -0.5, 0.75, -0.5);
+        Actor player = new Actor("Vega", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", map.get(0), playerAliases, playerInventory, false);
+        Actor Edelmar = new Actor("Edelmar", "aDescription", "anExamination", map.get(1) , 1, aliasesEl, inventoryEl,6 , 1, 4, 4, 0.25, -0.5, 0.75, -0.5, false);
 
         if(map.get(1).getVisits() == 1){
             System.out.println("This is your first visit to this room.");

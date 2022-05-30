@@ -10,15 +10,24 @@ END
 Edelmar's Office
 1
 2,3,0,-1
-A balcony connected to the office. You can see the city skyline from out here.
+The office/second home of Edelmar Voigt. It's cozy, large enough to be a studio apartment.
+At the very least, the place is warm and inviting, even if its owner isn't always so. You 
+can see an exit out *north* towards a private garden. To the south, there's a library. (It's
+supposed to be secret, but I personally think Edelmar's tired of people sneaking in when he's
+not here.)
+
 EXAMINE
-Calm, no winds right now. There's a broken pot near the railing.
+There are *display cases* filled with various weapons you do not know the names of.
+(That one's called a morning star, that funky looking one's a sword catcher. Guess
+what it does!) To the corner, you see a *fluffy mat and bed*. Fenrir sits on it, content,
+awaiting the occasional pet from his contractee.
 END
 Edelmar's Private Garden
 2
 -1,1,-1,-1
-Edel's private (debatable) garden. He grows some interesting things here. I think
+Edel's private (debatable) garden. He grows some interesting things here. You think
 I saw orchids blooming next to an actual corpse flower.
+
 EXAMINE
 The only exit here is back into Edel's office.
 END

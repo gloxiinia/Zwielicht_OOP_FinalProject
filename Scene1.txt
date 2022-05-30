@@ -19,7 +19,7 @@ text After some brief, conspiratorial whispers between the pair, he breaks into 
 text “How very kind of you, if only it was to save your own hide,” he says with a quirk of his lips. [20]
 text “So, any other reason for this visit?” [25]
 option “Quiet? For you, maybe. Inside my head are a million thoughts and phrases he just wants to let loose.” {0,0,1,-1}[22]
-text You wouldn’t call the expression that flits El’s face concern, it’s more of pity. Of what, you don’t really know. [23]
+text You wouldn’t call the expression that flits El’s face concern, it’s more of pity.\nOf what, you don’t really know. [23]
 text He schools his expression back to his usual level of glacial and asks: [20]
 option “If anything, I think you’re the one in need of this information.” {0,0,0,0}[25]
 text “Sibyl found it.” [26]

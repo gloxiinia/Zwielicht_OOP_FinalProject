@@ -15,11 +15,12 @@ public class Methods implements java.io.Serializable{
         for(i = 0; i < word.length(); i++){
             System.out.printf("%c", word.charAt(i));
             try{
-                Thread.sleep(100);//0.1s pause between characters
+                Thread.sleep(50);//0.1s pause between characters
             }catch(InterruptedException ex){
                 Thread.currentThread().interrupt();
             }
         }
+        System.out.println();
     }
 
     public void printsceneList(ArrayList<Scene> sceneList){

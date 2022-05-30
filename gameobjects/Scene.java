@@ -1,8 +1,11 @@
 package gameobjects;
 
+import java.util.ArrayList;
+
 public class Scene extends ThingHolder{
 
     private int north, south, east, west, visits;
+    private ArrayList<Actor> sceneNPCs = new ArrayList<>();
 
     public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, int visits){
         super(aName, aDescription, anExamination, tl);
@@ -11,6 +14,16 @@ public class Scene extends ThingHolder{
         this.east = e;
         this.west = w;
         this.visits = visits;
+    }
+
+    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, int visits, ArrayList<Actor> sceneNPCs){
+        super(aName, aDescription, anExamination, tl);
+        this.north = n;
+        this.south = s;
+        this.east = e;
+        this.west = w;
+        this.visits = visits;
+        this.sceneNPCs = sceneNPCs;
     }
 
     //setters
@@ -36,6 +49,10 @@ public class Scene extends ThingHolder{
         this.visits++;
     }
 
+    public void setSceneNPCs(ArrayList<Actor> sceneNPCs){
+        this.sceneNPCs = sceneNPCs;
+    }
+
 
     //getters
     public int getNorth(){
@@ -57,4 +74,14 @@ public class Scene extends ThingHolder{
     public int getVisits(){
         return this.visits;
     }
+
+    public Actor getNPC(String aName){
+        for(Actor npc : sceneNPCs){
+            if(aName.equals(npc.getName()));
+            return npc;
+        }
+        return null;
+    }
+
+    
 }

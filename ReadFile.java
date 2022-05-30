@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import gameobjects.Actor;
 import gameobjects.Item;
 import gameobjects.Scene;
 import gameobjects.Thing;
@@ -76,47 +77,75 @@ public class ReadFile {
         return null;
     }
 
-    public static ThingList createNPCs(){
+    public static ArrayList<Actor> createSceneNPCs(Scene aScene){
+
+        ThingList allItems = createItems();
         try{
-            BufferedReader reader = new BufferedReader(new FileReader("TestItems.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("Edelmar.txt"));
             String line = reader.readLine();
-            ThingList items = new ThingList();
+            ArrayList<Actor> NPCs = new ArrayList<>();
 
             while(!line.equals("ENDOFFILE")){
-                //item name
+                //actor name
                 String name = line;
                 name = name.trim().toLowerCase();
                 
                 line = reader.readLine();
 
-                //item location
+                //actor location
                 int location = Integer.parseInt(line);
                 line = reader.readLine();
 
-                //item aliases (other names for the item)
+                //actor aliases (other names for the actor)
                 ArrayList<String> aliases = new ArrayList<>(Arrays.asList(line.split(",")));
                 line = reader.readLine();
+
+                //actor inventory
+                ArrayList<String> actorInventoryList = new ArrayList<>(Arrays.asList(line.split(",")));
+                ThingList actorInventory = new ThingList();
+                for(String itemName : actorInventoryList){
+                    actorInventory.add(allItems.thisThing(itemName));
+                }
+                line = reader.readLine();
                 
-                //item description
+                //actor description
                 String description = "";
-                while(!line.equals("PICKUP")){
+                while(!line.equals("ATTRIBUTES")){
                     description += line + '\n';
                     line = reader.readLine();
                 }
                 line = reader.readLine();
 
-                //is the item pickupable?
-                boolean isPickupable = Boolean.parseBoolean(line);
+                //actor attributes
+                ArrayList<String> attributesList = new ArrayList<>(Arrays.asList(line.split(",")));
+                //base anger
+                double baseAnger = Integer.valueOf(attributesList.get(0));
+                //base fear
+                double baseFear = Integer.valueOf(attributesList.get(1));
+                //base relation
+                double baseRelation = Integer.valueOf(attributesList.get(2));
+                //base happiness
+                double baseHappiness = Integer.valueOf(attributesList.get(3));
+
                 line = reader.readLine();
+
+                //actor tendencies
+                ArrayList<String> tendenciesList = new ArrayList<>(Arrays.asList(line.split(",")));
+                //angertendency (How prone they are to anger)
+                double angerTendency = Double.parseDouble(tendenciesList.get(0));
+                //fearTendency (How prone they are to fear)
+                double fearTendency = Double.parseDouble(tendenciesList.get(1));
+                //relationTendency (How prone they are to relation)
+                double relationTendency = Double.parseDouble(tendenciesList.get(2));
+                //happinessTendency (How prone they are to happiness)
+                double happinessTendency = Double.parseDouble(tendenciesList.get(3));
+                line = reader.readLine();
+
+                //examine response when in dialogue
+                ArrayList<String> dialogueResponseList = new ArrayList<>(Arrays.asList(line.split("@")));
+                line = reader.readLine();
+
                 
-                //is the item usable?
-                boolean isUsable = Boolean.parseBoolean(line);
-                line = reader.readLine();
-
-                //is the item a key item?
-                boolean isKeyItem = Boolean.parseBoolean(line);
-                line = reader.readLine();
-
                 //item examination (detailed description when you examine a location)
                 String examination = "";
                 while(!line.equals("END")){
@@ -124,14 +153,15 @@ public class ReadFile {
                     line = reader.readLine();
                 }
 
-                Item anItem = new Item(name, description, examination, location, aliases, isPickupable, isUsable, isKeyItem);
-                items.add(anItem);
+                Actor anActor = new Actor(name, description, examination, aScene, location, aliases, actorInventory, baseAnger, baseFear, baseRelation, baseHappiness, angerTendency,
+                                    fearTendency, relationTendency, happinessTendency, dialogueResponseList);
+                NPCs.add(anActor);
 
                 line = reader.readLine();
             }
 
             reader.close();
-            return items;
+            return NPCs;
 
         } catch (IOException e){
             System.out.println("File could not be accessed, try again!");
@@ -143,6 +173,7 @@ public class ReadFile {
     public static ArrayList<Scene> createScenes(){
 
         ThingList allItems = createItems();
+        
 
         try{
             BufferedReader reader = new BufferedReader(new FileReader("TestScenes.txt"));
@@ -168,6 +199,7 @@ public class ReadFile {
                 int w = Integer.parseInt(neighbors.get(3));
                 line = reader.readLine();
                 
+
                 //location description
                 String description = "";
                 while(!line.equals("EXAMINE")){
@@ -189,8 +221,11 @@ public class ReadFile {
                         sceneItems.add(i);
                     }
                 }
+
                 int visits = 0;
                 Scene aScene = new Scene(name, description, examination, n, s, e, w, sceneItems, visits);
+                ArrayList<Actor> sceneNPCs = createSceneNPCs(aScene);
+                aScene.setSceneNPCs(sceneNPCs);
                 scenes.add(aScene);
 
                 line = reader.readLine();
@@ -210,14 +245,7 @@ public class ReadFile {
     //Testing out the ReadFile methods
     public static void main(String[] args ){
         ArrayList<Scene> checking = createScenes();
-        for(Scene i : checking){
-            System.out.println(i.getName());
-            System.out.println(i.getDescription());
-            System.out.println(i.getExamination());
-            ThingList k = i.getThings();
-            System.out.println(k.describeThings());
 
-        }
 
 
 

@@ -3,7 +3,7 @@ option@"C'mon, you should know me better by now, El."@-1,0,1,-1@3
 text@You hear him scoff. After a few more seconds of scribbling and a final flourish of@4 
 text@his signature, he sets down his pen and finally graces you with his full attention.@5
 text@"So, what is it you're in need of this time?"@6,24
-option@"Can't a friend just visit for the sake of it? I thought you'd be bored, cooped \nup all day in this stuffy office."@7 
+option@"Can't a friend just visit for the sake of it? I thought you'd be bored, cooped up all day in this stuffy office."@7 
 text@"Yes, while I appreciate the sentiment, might I remind you this "stuffy" office@8
 text@has a nice garden, for when I need a break."@9
 text@"You actually take breaks now?" You raise an eyebrow, incredulous.@10
@@ -42,8 +42,3 @@ text@Probably better to get this done and over with ASAP.@42,44
 option@"I have information on *that* case you asked Sibyl to look into."@25 
 option@"Honestly, why can't you loosen up a little sometimes?"@25
 option@"Actually, I think you'd be better off asking Sibyl on this. I have better things to do."@25
-END
-
-
-
-

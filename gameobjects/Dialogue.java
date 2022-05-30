@@ -1,7 +1,7 @@
 package gameobjects;
 import java.util.ArrayList;
 
-public class Dialogue {
+public class Dialogue implements java.io.Serializable {
     private boolean isText;
     private ArrayList<String> nextDialogueLine;
     private String dialogue;
