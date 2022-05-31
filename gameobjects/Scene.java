@@ -4,25 +4,24 @@ import java.util.ArrayList;
 
 public class Scene extends ThingHolder{
 
-    private int north, south, east, west, visits;
+    private int north, south, east, west;
+    private boolean isDialogueFinished;
     private ArrayList<Actor> sceneNPCs = new ArrayList<>();
 
-    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, int visits){
+    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl){
         super(aName, aDescription, anExamination, tl);
         this.north = n;
         this.south = s;
         this.east = e;
         this.west = w;
-        this.visits = visits;
     }
 
-    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, int visits, ArrayList<Actor> sceneNPCs){
+    public Scene(String aName, String aDescription, String anExamination, int n, int s, int e, int w, ThingList tl, ArrayList<Actor> sceneNPCs){
         super(aName, aDescription, anExamination, tl);
         this.north = n;
         this.south = s;
         this.east = e;
         this.west = w;
-        this.visits = visits;
         this.sceneNPCs = sceneNPCs;
     }
 
@@ -45,12 +44,14 @@ public class Scene extends ThingHolder{
         this.west = west;
     }
 
-    public void addVisit(){
-        this.visits++;
-    }
+
 
     public void setSceneNPCs(ArrayList<Actor> sceneNPCs){
         this.sceneNPCs = sceneNPCs;
+    }
+
+    public void setIfDialogueIsFinished(boolean check){
+        this.isDialogueFinished = check;
     }
 
 
@@ -71,16 +72,31 @@ public class Scene extends ThingHolder{
         return this.west;
     }
 
-    public int getVisits(){
-        return this.visits;
+    public ArrayList<Actor> getSceneNPCs(){
+        return this.sceneNPCs;
     }
 
     public Actor getNPC(String aName){
-        for(Actor npc : sceneNPCs){
-            if(aName.equals(npc.getName()));
+        for(Actor npc : this.sceneNPCs){
+            if(aName.equals(npc.getName()) || npc.getAliases().contains(aName));
             return npc;
         }
         return null;
+    }
+
+    public ArrayList<String> getNPCNames(){
+        ArrayList<String> sceneNPCNames = new ArrayList<>();
+        for(Actor npc : this.sceneNPCs){
+            sceneNPCNames.add(npc.getName().toLowerCase());
+            for(String alias : npc.getAliases()){
+                sceneNPCNames.add(alias.toLowerCase());
+            }
+        }
+        return sceneNPCNames;
+    }
+
+    public boolean getIsDialogueFinished(){
+        return this.isDialogueFinished;
     }
 
     

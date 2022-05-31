@@ -30,7 +30,7 @@ public class TextParser {
         
         boolean foundExamineWords = false;
         boolean foundMoveWords = false;
-        boolean foundTalkWords = false;
+        //boolean foundTalkWords = false;
         boolean foundTakeWords = false;
         boolean foundDropWords = false;
         //boolean foundCombatWords = false;
@@ -42,13 +42,13 @@ public class TextParser {
         //lists containing possible words for specific in-game commands or possible inputs
         List<String> examineActions = new ArrayList<>(Arrays.asList("look", "check", "inspect", "examine", "study"));
         List<String> moveActions = new ArrayList<>(Arrays.asList("move", "go", "walk", "travel"));
-        List<String> talkActions = new ArrayList<>(Arrays.asList("talk", "chat"));
         List<String> takeActions = new ArrayList<>(Arrays.asList("take", "grab", "nab"));
+        List<String> quitActions = new ArrayList<>(Arrays.asList("quit", "exit", "q"));
+        List<String> directions = new ArrayList<>(Arrays.asList("north", "n", "south", "s", "east", "e", "west", "w"));
+        //List<String> talkActions = new ArrayList<>(Arrays.asList("talk", "chat"));
         //List<String> combatActions = new ArrayList<>(Arrays.asList("fight", "battle", "duel"));
         List<String> yesActions = new ArrayList<>(Arrays.asList("yes", "correct", "y", "yeah", "yea", "yep", "mhm", "right", "true"));
         List<String> noActions = new ArrayList<>(Arrays.asList("no", "n", "nope", "wrong", "nuhuh", "nah", "incorrect", "false"));
-        List<String> quitActions = new ArrayList<>(Arrays.asList("quit", "exit", "q"));
-        List<String> directions = new ArrayList<>(Arrays.asList("north", "n", "south", "s", "east", "e", "west", "w"));
 
         int remainingWordsindex = 0;
         String remainingWords;
@@ -68,7 +68,6 @@ public class TextParser {
                 foundExamineWords = true;
                 
             }
-
 
             if(foundExamineWords == true){
                 if (words.size() > remainingWordsindex){
@@ -138,7 +137,7 @@ public class TextParser {
 
             //TALK
             //Parsing the words for the talk command
-            if(talkActions.contains(words.get(0)) && (words.get(1).equals("to") || words.get(1).equals("with"))){
+            /*if(talkActions.contains(words.get(0)) && (words.get(1).equals("to") || words.get(1).equals("with"))){
                 remainingWordsindex = 2;
                 foundTalkWords = true;
                 
@@ -165,7 +164,7 @@ public class TextParser {
                     result.add(remainingWords);
                     return result;
                 } 
-            }
+            }*/
 
             //TAKE
             //Parsing the words for the take command

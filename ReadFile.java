@@ -2,8 +2,12 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import gameobjects.Actor;
 import gameobjects.Item;
@@ -119,26 +123,26 @@ public class ReadFile {
                 //actor attributes
                 ArrayList<String> attributesList = new ArrayList<>(Arrays.asList(line.split(",")));
                 //base anger
-                double baseAnger = Integer.valueOf(attributesList.get(0));
+                BigDecimal baseAnger = new BigDecimal(attributesList.get(0));
                 //base fear
-                double baseFear = Integer.valueOf(attributesList.get(1));
+                BigDecimal baseFear = new BigDecimal(attributesList.get(1));
                 //base relation
-                double baseRelation = Integer.valueOf(attributesList.get(2));
+                BigDecimal baseRelation = new BigDecimal(attributesList.get(2));
                 //base happiness
-                double baseHappiness = Integer.valueOf(attributesList.get(3));
+                BigDecimal baseHappiness = new BigDecimal(attributesList.get(3));
 
                 line = reader.readLine();
 
                 //actor tendencies
                 ArrayList<String> tendenciesList = new ArrayList<>(Arrays.asList(line.split(",")));
                 //angertendency (How prone they are to anger)
-                double angerTendency = Double.parseDouble(tendenciesList.get(0));
+                BigDecimal angerTendency = new BigDecimal(tendenciesList.get(0));
                 //fearTendency (How prone they are to fear)
-                double fearTendency = Double.parseDouble(tendenciesList.get(1));
+                BigDecimal fearTendency = new BigDecimal(tendenciesList.get(1));
                 //relationTendency (How prone they are to relation)
-                double relationTendency = Double.parseDouble(tendenciesList.get(2));
+                BigDecimal relationTendency = new BigDecimal(tendenciesList.get(2));
                 //happinessTendency (How prone they are to happiness)
-                double happinessTendency = Double.parseDouble(tendenciesList.get(3));
+                BigDecimal happinessTendency = new BigDecimal(tendenciesList.get(3));
                 line = reader.readLine();
 
                 //examine response when in dialogue
@@ -222,8 +226,7 @@ public class ReadFile {
                     }
                 }
 
-                int visits = 0;
-                Scene aScene = new Scene(name, description, examination, n, s, e, w, sceneItems, visits);
+                Scene aScene = new Scene(name, description, examination, n, s, e, w, sceneItems);
                 ArrayList<Actor> sceneNPCs = createSceneNPCs(aScene);
                 aScene.setSceneNPCs(sceneNPCs);
                 scenes.add(aScene);
@@ -240,6 +243,33 @@ public class ReadFile {
         }
         return null;
 
+    }
+
+    //getting a specific line in a txt file
+    public static String getSpecificLine(int lineNum, String fileName) throws IOException{
+        String line = Files.readAllLines(Paths.get(fileName)).get(lineNum - 1);
+        return line;
+    }
+
+    //parsing a line in a txt by splitting it according to the regex (@)
+    public static ArrayList<String> parseLine(String line){
+        ArrayList<String> splitLine = new ArrayList<>(Arrays.asList(line.split("@")));
+        splitLine.add(splitLine.get(splitLine.size()-1).trim());
+        return splitLine;
+    }
+
+    //splitting an ArrayList<String> by commas
+    public static ArrayList<String> splitByCommas(ArrayList<String> line, int position){
+        ArrayList<String> splitLine = new ArrayList<>();
+        if(position < 0){
+            List<String> result = Arrays.asList(line.get(line.size() + position).split(","));
+            splitLine.addAll(result);
+        }else{
+            List<String> result = Arrays.asList(line.get(position).split(","));
+            splitLine.addAll(result);
+            
+        }
+        return splitLine;
     }
 
     //Testing out the ReadFile methods

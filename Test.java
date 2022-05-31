@@ -66,6 +66,59 @@ public class Test {
  
     }
 
+    public void getDialogues(String aLine, Actor anActor) throws NumberFormatException, IOException{
+        ArrayList<String> splitDialogue = parseLine(aLine);
+        ArrayList<String> nextDialogueLine = splitByCommas(splitDialogue, -1);
+
+        Dialogue myDialogue = new Dialogue();
+        myDialogue.setnextDialogueLine(nextDialogueLine);
+        myDialogue.setDialogue(splitDialogue.get(1));
+
+        if(myDialogue.getFirstNextDialogue() != -1){
+            if(splitDialogue.get(0).equals("text")){
+                nextList.clear();
+                System.out.println(myDialogue.getDialogue());
+                System.out.println();
+                for(String number : myDialogue.getNextDialogueLine()){
+                    String nextLine = getSpecificLine(Integer.parseInt(number.trim()), "TestScene.txt");
+                    getDialogues(nextLine, anActor);
+                }
+                
+            }
+            else{
+                ArrayList<String> attributeChanges = splitByCommas(splitDialogue, 2);
+                System.out.println(attributeChanges);
+                double angerChange = Double.parseDouble(attributeChanges.get(0));
+                double fearChange = Double.parseDouble(attributeChanges.get(1));
+                double relationChange = Double.parseDouble(attributeChanges.get(2));
+                double happinessChange = Double.parseDouble(attributeChanges.get(3));
+
+                anActor.addAnger(angerChange);
+                anActor.addFear(fearChange);
+                anActor.addRelation(relationChange);
+                anActor.addHappiness(happinessChange);
+
+                myDialogue.setAngerChange(angerChange);
+                myDialogue.setFearChange(fearChange);
+                myDialogue.setRelationChange(relationChange);
+                myDialogue.setHappinessChange(happinessChange);
+
+                System.out.println("Anger\t\t: " + anActor.getAnger());
+                System.out.println("Fear\t\t:  " + anActor.getFear());
+                System.out.println("Relation\t:  " +anActor.getRelation());
+                System.out.println("Happiness\t: " + anActor.getHappiness());
+                
+                nextList.add(myDialogue.getFirstNextDialogue());
+                System.out.println(nextList.size() + ". " + myDialogue.getDialogue());
+            }
+        }else{
+            nextList.clear();
+            System.out.println(myDialogue.getDialogue());
+            
+        }
+ 
+    }
+
     public static String getDialogues2(String aLine, String previousMessage) throws NumberFormatException, IOException{
         ArrayList<String> splitDialogue = parseLine(aLine);
         String dialogue = splitDialogue.get(1);

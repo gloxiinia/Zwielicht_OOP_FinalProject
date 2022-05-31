@@ -2,14 +2,12 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 import gameobjects.Actor;
 import gameobjects.Dialogue;
@@ -22,18 +20,16 @@ import globals.Methods;
 
 
 
-public class Game implements java.io.Serializable{
+public class Game2 implements java.io.Serializable{
 
         //Creating the needed assets
         private ArrayList<Scene> map; 
         private ArrayList<String> allItemNames;
         private ThingList allItems;
         private ArrayList<String> sceneNames;
-        private ArrayList<String> allNPCNames;
         private Actor player;
+        private Actor edelmar;
         private ArrayList<Integer> nextList = new ArrayList<>();
-        private ArrayList<Dialogue> listOfChoices = new ArrayList<>();
-        private Map<Scene, Integer> playerVisits = new HashMap<>();
         List<String> commands = new ArrayList<>(Arrays.asList("examine", "move", "talk", "take", "drop", "use", "yes", "no", "quit"));
         List<String> directions = new ArrayList<>(Arrays.asList("north", "south", "east", "west"));
         List<String> miscNouns = new ArrayList<>(Arrays.asList("inventory", "i", "around"));
@@ -43,18 +39,15 @@ public class Game implements java.io.Serializable{
         }
 
         //constructor
-        public Game(){
+        public Game2(){
             //creating the game map + a list of all scene names by reading the Scenes file
             this.map = ReadFile.createScenes();
             this.sceneNames = getAllSceneNames();
-            //getting the list of all NPC names
-            this.allNPCNames = getAllNPCNames();
             //creating a list of all items + all item names by reading the Items file
             this.allItems = ReadFile.createItems();
             this.allItemNames = allItems.allThingNamesList(allItems);
             //creating the player inventory
             ThingList playerInventory = new ThingList();
-            setSceneVisitMap();
 
             ArrayList<String> playerAliases = new ArrayList<>(Arrays.asList("me", "myself", "I"));
             player = new Actor("Vega", "Not worth getting into my backstory.", "Really, nothing noteworthy here.", 
@@ -64,21 +57,38 @@ public class Game implements java.io.Serializable{
 
         }
 
-        //DIALOGUE
+        //TESTING FOR DIALOGUE
         public void startDialogue(String actorName, String fileName){
             getPlayer().setIfActorIsInDialogue(true);
             while(getPlayer().isActorInDialogue()){
                 getPlayer().setWhoActorInDialogueWith(actorName);
-                processActorScene(1, fileName, getActiveDialogueNPC());
+                processActorScene(1, fileName);
             }
         }
-        
-        public ArrayList<Dialogue> getDialogues(String aLine, Actor anActor) throws NumberFormatException, IOException{
-            ArrayList<String> splitDialogue = ReadFile.parseLine(aLine);
-            ArrayList<String> nextDialogueLine = ReadFile.splitByCommas(splitDialogue, -1);
+
+        public String getSpecificLine(int lineNum, String fileName) throws IOException{
+            String line = Files.readAllLines(Paths.get(fileName)).get(lineNum - 1);
+            return line;
+        }
+    
+        public ArrayList<String> parseLine(String line){
+            ArrayList<String> splitLine = new ArrayList<>(Arrays.asList(line.split("@")));
+            splitLine.add(splitLine.get(splitLine.size()-1).trim());
+            return splitLine;
+        }
+    
+        public ArrayList<String> getnextDialogueLine(ArrayList<String> line){
+            ArrayList<String> nextDialogueLine = new ArrayList<>(Arrays.asList(line.get(line.size()-1).split(",")));
+            return nextDialogueLine;
+        }
+
+        public void getDialogues(String aLine) throws NumberFormatException, IOException{
+            ArrayList<String> splitDialogue = parseLine(aLine);
+            String dialogue = splitDialogue.get(1);
+            ArrayList<String> nextDialogueLine = getnextDialogueLine(splitDialogue);
             Dialogue myDialogue = new Dialogue();
             myDialogue.setnextDialogueLine(nextDialogueLine);
-            myDialogue.setDialogue(splitDialogue.get(1));
+            myDialogue.setDialogue(dialogue);
     
             if(myDialogue.getFirstNextDialogue() != -1){
                 if(splitDialogue.get(0).equals("text")){
@@ -86,69 +96,69 @@ public class Game implements java.io.Serializable{
                     System.out.println(myDialogue.getDialogue());
                     System.out.println();
                     for(String number : myDialogue.getNextDialogueLine()){
-                        String nextLine = ReadFile.getSpecificLine(Integer.parseInt(number.trim()), "TestScene.txt");
-                        getDialogues(nextLine, anActor);
+                        String nextLine = getSpecificLine(Integer.parseInt(number.trim()), "TestScene.txt");
+                        getDialogues(nextLine);
                     }
                     
-                }
-                else{
-                    ArrayList<String> attributeChanges = ReadFile.splitByCommas(splitDialogue, 2);
-                    System.out.println(attributeChanges);
-                    BigDecimal angerChange = new BigDecimal(attributeChanges.get(0));
-                    BigDecimal fearChange = new BigDecimal(attributeChanges.get(1));
-                    BigDecimal relationChange = new BigDecimal(attributeChanges.get(2));
-                    BigDecimal happinessChange = new BigDecimal(attributeChanges.get(3));
-                    
-                    myDialogue.setAngerChange(angerChange);
-                    myDialogue.setFearChange(fearChange);
-                    myDialogue.setRelationChange(relationChange);
-                    myDialogue.setHappinessChange(happinessChange);
-                    
+                }else{
                     nextList.add(myDialogue.getFirstNextDialogue());
                     System.out.println(nextList.size() + ". " + myDialogue.getDialogue());
-                    listOfChoices.add(myDialogue);
-                    
                 }
             }else{
                 nextList.clear();
                 System.out.println(myDialogue.getDialogue());
                 
             }
-            return listOfChoices;
      
         }
 
-        public void processActorScene(int count, String fileName, Actor anActor){
+        public void processActorScene(int count, String fileName){
             try{
                 List<String> outputs = new ArrayList<>();
                 String output;
                 BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
-                String nextLine = ReadFile.getSpecificLine(count, fileName);
-                listOfChoices = getDialogues(nextLine, anActor);
-                anActor.printNPCCurrentAttributes();
+                String nextLine = getSpecificLine(count, fileName);
+                getDialogues(nextLine);
                 System.out.println();
                 if(this.getNextList().isEmpty()){
                     getPlayer().setIfActorIsInDialogue(false);
-                    getActiveScene().setIfDialogueIsFinished(true);
+                    getPlayer().getScene().addVisit();
                     System.out.println("This is the end of the Edelmar Dialogue.\nYou are now free to roam around the map. Have fun!");
+                    System.out.println(getPlayer().isActorInDialogue());
                 }else{
+                    
                     System.out.print("> ");
                     String choice = userReader.readLine();
                     outputs = TextParser.processInput(choice);
                     output = RunCommand(outputs);
                     
                     if(!outputs.isEmpty()){
-                        if(Methods.isNumeric(output)){
+                        if(TextParser.isNumberChoiceValid(outputs.get(0))){
                             count = Integer.parseInt(output);
-                            processActorScene(count, fileName, anActor);
-                        }else{
-                            System.out.println(output);
-                            processActorScene(count, fileName, anActor);
+                            processActorScene(count, fileName);
                         }
-
+                        else if(getPlayer().isActorInDialogue()){  
+                            if(outputs.get(0).equals("examine") && (getCurrentActiveDialogueNPC().getAliases().contains(outputs.get(1)) || 
+                                getCurrentActiveDialogueNPC().getName().equals(outputs.get(1)))){
+                                System.out.println(getCurrentActiveDialogueNPC().getExamineResponse() + "\n");
+                                System.out.println(getCurrentActiveDialogueNPC().getExamination() + "\n");
+                                
+                            }else if(outputs.get(0).equals("examine") ){
+                                System.out.println(getCurrentActiveDialogueNPC().getExamineResponse() + "\n") ;
+                                
+                            }else if(outputs.get(0).equals("move")){
+                                System.out.println(getCurrentActiveDialogueNPC().getMoveResponse() + "\n") ;
+                            }else if(outputs.get(0).equals("take")){
+                                System.out.println(getCurrentActiveDialogueNPC().getTakeResponse() + "\n") ;
+                            }else if(outputs.get(0).equals("drop")){
+                                System.out.println(getCurrentActiveDialogueNPC().getDropResponse() + "\n") ;
+                            }  
+                            processActorScene(count, fileName);
+        
+                        }
                     }else{
-                        System.out.println(output);
-                        processActorScene(count, fileName, anActor);
+                        System.out.println("I can't recognize that, sorry.");
+                        processActorScene(count, fileName);
                     }
                     
                 }
@@ -162,8 +172,8 @@ public class Game implements java.io.Serializable{
     
         }
 
-        public Actor getActiveDialogueNPC(){
-            return getActiveScene().getNPC(getPlayer().getWhoActorInDialogueWith());
+        public Actor getCurrentActiveDialogueNPC(){
+            return getPlayer().getScene().getNPC(getPlayer().getWhoActorInDialogueWith());
         }
        
 
@@ -172,7 +182,7 @@ public class Game implements java.io.Serializable{
         //EXAMINING-----------------------------------------------------------------------
         private String examineItem(String itemName){
             String msg = "";
-            Thing aSceneItem = getActiveScene().getThings().thisThing(itemName);
+            Thing aSceneItem = getPlayer().getScene().getThings().thisThing(itemName);
             Thing anInventoryItem = getPlayer().getThings().thisThing(itemName);
 
             //flags for whether a sceneitem or aninventoryitem is found
@@ -182,35 +192,24 @@ public class Game implements java.io.Serializable{
             //checking inventory
             if((itemName.equals("inventory") || itemName.equals("i"))){ // check the i command
                 showInventory(getPlayer());
-            }
-            else if(allNPCNames.contains(itemName)){
-                if(getActiveScene().getNPC(itemName).equals(getActiveDialogueNPC()) && getPlayer().isActorInDialogue()){
-                    msg = getActiveDialogueNPC().getName();
-                    msg += getActiveScene().getNPC(itemName).getExamination();
-                }else{
-                    msg = "They're not in your current area. How would you examine them?";
-                }
 
             }
             //examining the active scene
             else if(itemName.equals("around")){
-                msg = getActiveScene().getExamination();
+                msg = getPlayer().getScene().getExamination();
+
             }
-            //checking if the desired item is an inventory item
             else if(anInventoryItem == null){
                 msg = "There's nothing named " + itemName + " in your inventory.";
                 inventoryItemFound = false;
             }
-            //checking if the desired item is an item in the scene
             else if(aSceneItem == null){
                 msg = "There's nothing named " + itemName + " in this location.";
                 sceneItemFound = false;
             }
-            //found an item in the inventory
             if (!sceneItemFound && inventoryItemFound){
                 msg = anInventoryItem.getExamination();
             }
-            //found an item in the scene
             if(sceneItemFound && !inventoryItemFound){
                 msg = aSceneItem.getExamination();
             }
@@ -234,7 +233,7 @@ public class Game implements java.io.Serializable{
 
         public String takeItem(String itemName){
             String msg = "";
-            Thing t = getActiveScene().getThings().thisThing(itemName);
+            Thing t = getPlayer().getScene().getThings().thisThing(itemName);
             if (itemName.equals("")){
                 itemName = "nothing";
             }if(t == null){
@@ -254,20 +253,16 @@ public class Game implements java.io.Serializable{
         public String dropItem(String itemName){
             String msg = "";
             Thing t = getPlayer().getThings().thisThing(itemName);
-            if(getPlayer().isActorInDialogue()){
-                msg = getActiveDialogueNPC().getDropResponse() + "\n" ;
+            if (itemName.equals("")){
+                msg = "You have to *name* the object. I can't read your mind.";
+            }if(t == null){
+                msg = "There's nothing named " + itemName + " in your inventory.";
             }else{
-                if (itemName.equals("")){
-                    msg = "You have to *name* the object. I can't read your mind.";
-                }if(t == null){
-                    msg = "There's nothing named " + itemName + " in your inventory.";
+                if(t.isThingKey() == false){
+                    transferItem(t, player.getThings(), player.getScene().getThings());
+                    msg =  "\n" + Methods.capitalizeString(itemName) + " has been dropped.";
                 }else{
-                    if(t.isThingKey() == false){
-                        transferItem(t, player.getThings(), player.getScene().getThings());
-                        msg =  "\n" + Methods.capitalizeString(itemName) + " has been dropped.";
-                    }else{
-                        msg = "I don't think you should drop that.";
-                    }
+                    msg = "I don't think you should drop that.";
                 }
             }
 
@@ -330,9 +325,10 @@ public class Game implements java.io.Serializable{
             if (sceneNumber == Direction.NOEXIT) {
                 msg = "You can't travel that way, sorry.\n";
             }else {
-                getPlayer().setLocation(sceneNumber);
-                getPlayer().addVisit(getActiveScene());
-                msg = "You are now in " + getActiveScene().getName() + ". " + '\n'+ getActiveScene().getDescription();
+                Scene activeScene = getPlayer().getScene();
+                this.getPlayer().setLocation(sceneNumber);
+                activeScene.addVisit();
+                msg = "You are now in " + activeScene.getName() + ". " + '\n'+ activeScene.getDescription();
 
             }
             System.out.print(msg);
@@ -355,11 +351,6 @@ public class Game implements java.io.Serializable{
             return player;
         }
 
-        //method to return the active scene
-        public Scene getActiveScene(){
-            return getPlayer().getScene();
-        }
-
         //method to return each of the scene's names
         public ArrayList<String> getAllSceneNames(){
             ArrayList<String> allSceneNames = new ArrayList<>();
@@ -367,27 +358,6 @@ public class Game implements java.io.Serializable{
                 allSceneNames.add(s.getName().toLowerCase());
             }
             return allSceneNames;
-        }
-
-        //method to return each of the NPC names
-        public ArrayList<String> getAllNPCNames(){
-            ArrayList<String> allNPCNames = new ArrayList<>();
-            for(Scene s : this.map){
-                allNPCNames.addAll(s.getNPCNames());
-            }
-            return allNPCNames;
-        }
-
-        //method to return one specific dialogue that is an option for the player
-        public Dialogue getADialogueOption(int index){
-            return this.listOfChoices.get(index);
-        }
-
-        //method to assign the Scenes a visit value in the hashmap
-        public void setSceneVisitMap(){
-            for(Scene s : this.map){
-                playerVisits.put(s, 0);
-            }
         }
 
         //Might delete
@@ -416,30 +386,23 @@ public class Game implements java.io.Serializable{
             verb = wordList.get(0);
             if(verb.equals("quit")){
                 msg += "Thank you for playing the game!";
-            }else if(getPlayer().isActorInDialogue() && TextParser.isNumberChoiceValid(verb)){
+            }else if(verb.equals("yes")){
+
+            }else if(verb.equals("no")){
+
+            }else if(TextParser.isNumberChoiceValid(verb)){
                 if(verb.equals("1") && getPlayer().isActorInDialogue()){
                     msg = String.valueOf(this.getNextList().get(0));
-                    getActiveDialogueNPC().addAllAttributes(getADialogueOption(0).getAngerChange(), 
-                    getADialogueOption(0).getFearChange(), getADialogueOption(0).getRelationChange(), getADialogueOption(0).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
-                    System.out.println();
 
                 }else if(verb.equals("2") && getPlayer().isActorInDialogue()){
                     msg = String.valueOf(this.getNextList().get(1));
-                    getActiveDialogueNPC().addAllAttributes(getADialogueOption(1).getAngerChange(), 
-                    getADialogueOption(1).getFearChange(), getADialogueOption(1).getRelationChange(), getADialogueOption(1).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
-                    System.out.println();
                     
                 }else if(this.getNextList().size() == 3 && verb.equals("3") && getPlayer().isActorInDialogue()){
                     msg = String.valueOf(this.getNextList().get(2));
-                    getActiveDialogueNPC().addAllAttributes(getADialogueOption(2).getAngerChange(), 
-                    getADialogueOption(2).getFearChange(), getADialogueOption(2).getRelationChange(), getADialogueOption(2).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
-                    System.out.println();
+                    
                 }
             }else{
-                msg = "That's not a recognized action.\n";
+                msg = "That's not a recognized action.";
                 return msg;
             }
             return msg;
@@ -456,54 +419,45 @@ public class Game implements java.io.Serializable{
             if(!commands.contains(verb)){
                 msg = "You either made a typo, or " + verb +" isn't a recognized action.\n";
                 error = true;
-            }if(!allItemNames.contains(noun) && !directions.contains(noun) && !miscNouns.contains(noun) && !allNPCNames.contains(noun)){
+            }if(!allItemNames.contains(noun) && !directions.contains(noun) && !miscNouns.contains(noun)){
                 msg += "You either made a typo, or " + noun + " isn't a recognized noun.\n";
                 error = true;
             }if(!error){
-                if(getPlayer().isActorInDialogue()){
-                    if(verb.equals("move")){
-                        msg += "You're currently talking to someone, finish up first.\n\n";
-                        msg += getActiveDialogueNPC().getMoveResponse() + "\n" ;
-                    }else if(verb.equals("examine") && (getActiveScene().getNPC(noun).equals(getActiveDialogueNPC())) && 
-                            (noun.equals(getActiveDialogueNPC().getName()) || getActiveDialogueNPC().getAliases().contains(noun))){
-                        msg += getActiveDialogueNPC().getExamineResponse() + "\n\n";
-                        msg += getActiveDialogueNPC().getExamination();
-                    }else if(verb.equals("examine") ){
-                        msg += getActiveDialogueNPC().getExamineResponse() + "\n" ;
-                    }else if(verb.equals("take")){
-                        msg += getActiveDialogueNPC().getTakeResponse() + "\n" ;
-                    }  
-                }else{
-                    if(directions.contains(noun)){ //processing move commands
-                        switch(noun){
-                            case "north":
-                                goN();
-                                break;
-                            case "south":
-                                goS();
-                                break;
-                            case "east":
-                                goE();
-                                break;
-                            case "west":
-                                goW();
-                                break;
-                            default:
-                                msg = "You either made a typo, or " + noun + " isn't a recognized direction.\n";
-                                break;
-                        }
-                    }else if(verb.equals("examine")){ //processing examine commands
-                        msg = examineItem(noun);
-                    }else if(verb.equals("take")){ //processing take commands
-                        msg = takeItem(noun);
-    
-                    }else if(verb.equals("drop")){ //processing drop commands
-                        msg = dropItem(noun);
-    
-                    }
+                if(verb.equals("move") && getPlayer().isActorInDialogue()){
+                    msg = "You're currently talking to someone, finish up first.\n";
                 }
+                else if(directions.contains(noun)){ //processing move commands
+                    switch(noun){
+                        case "north":
+                            goN();
+                            break;
+                        case "south":
+                            goS();
+                            break;
+                        case "east":
+                            goE();
+                            break;
+                        case "west":
+                            goW();
+                            break;
+                        default:
+                            msg = "You either made a typo, or " + noun + " isn't a recognized direction.\n";
+                            break;
+                    }
+                }else if(verb.equals("examine")){ //processing examine commands
+                    msg = examineItem(noun);
+                }else if(verb.equals("talk")){ //processing talk commands
+                    
+                }else if(verb.equals("take")){ //processing take commands
+                    msg = takeItem(noun);
 
+                }else if(verb.equals("drop")){ //processing drop commands
+                    msg = dropItem(noun);
 
+                }else if(getPlayer().getLocation() == 1 && getPlayer().getScene().getVisits() == 1){
+                    startDialogue("edelmar", "TestScene.txt");
+    
+                }
             }
 
             return msg;
@@ -517,7 +471,7 @@ public class Game implements java.io.Serializable{
             }else if(inputstr.size() == 1){
                 s = ProcessVerb(inputstr);
             }else{
-                s = "That's not a valid option.\n";
+                s = "That's not a valid option";
             }    
             
             return s;
@@ -527,6 +481,8 @@ public class Game implements java.io.Serializable{
         // Main driver method
         public static void main(String[] args) throws IOException
         {
+            
+
 
 
         }

@@ -181,7 +181,7 @@ public class Main {
         playerName = in.readLine();
         checkFolder = checkFolderExists(lowerTrim(playerName));
         if(!checkFolder){
-            System.out.print("There are no saved characters with that name. Please check if you've made a typo.");
+            System.out.println("There are no saved characters with that name. Please check if you've made a typo.\n");
         }else{
             System.out.println("\nWould you like to load this character?");
             System.out.println("Player Name: " + playerName);
@@ -251,7 +251,7 @@ public class Main {
             System.out.println();
             
             if(outputs.isEmpty()){
-                output = "I can't recognize that, sorry."; 
+                output = "I can't recognize that, sorry.\n"; 
 
             }else{
                 checkQuit = outputs.get(0); 
@@ -265,9 +265,11 @@ public class Main {
                     default:
                         output = game.RunCommand(outputs);
                         break;
-                }
                 //playing out the office scene
-
+                }if(game.getPlayer().getLocation() == 1 && game.getPlayer().getSpecificSceneVisits(game.getPlayer().getScene()) == 1 && !game.getPlayer().getScene().getIsDialogueFinished()){
+                    game.startDialogue("edelmar", "TestScene.txt");
+                }
+                
             }
             Methods.typewriterEffect(output);
 

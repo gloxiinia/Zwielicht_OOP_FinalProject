@@ -1,10 +1,12 @@
 package gameobjects;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Dialogue implements java.io.Serializable {
     private boolean isText;
     private ArrayList<String> nextDialogueLine;
     private String dialogue;
+    private BigDecimal angerChange, fearChange, relationChange, happinessChange;
 
     public Dialogue(){
 
@@ -35,6 +37,23 @@ public class Dialogue implements java.io.Serializable {
         this.dialogue = dialogue;
     }
 
+    public void setAngerChange(BigDecimal angerChange){
+        this.angerChange = angerChange;
+    }
+
+    public void setFearChange(BigDecimal fearChange){
+        this.fearChange = fearChange;
+    }
+
+    public void setRelationChange(BigDecimal relationChange){
+        this.relationChange = relationChange;
+    }
+
+    public void setHappinessChange(BigDecimal happinessChange){
+        this.happinessChange = happinessChange;
+    }
+
+    
     //getters
     public boolean getIsText(){
         return this.isText;
@@ -58,4 +77,21 @@ public class Dialogue implements java.io.Serializable {
     public String getDialogue(){
         return this.dialogue;
     }
+
+    public BigDecimal getAngerChange(){
+        return this.angerChange;
+    }
+
+    public BigDecimal getFearChange(){
+        return this.fearChange;
+    }
+
+    public BigDecimal getRelationChange(){
+        return this.relationChange;
+    }
+
+    public BigDecimal getHappinessChange(){
+        return this.happinessChange;
+    }
+
 }
