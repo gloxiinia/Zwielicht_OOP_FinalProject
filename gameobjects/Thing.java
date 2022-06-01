@@ -6,7 +6,7 @@ public class Thing implements java.io.Serializable{
     //Thing object that will be the superclass to all other game objects
 
     private String name, description, examination;
-    private boolean isPickupable, isUsable, isKeyItem;
+    private boolean isPickupable, isKeyItem;
     private int location;
     private ArrayList<String> aliases = new ArrayList<>();
 
@@ -35,13 +35,12 @@ public class Thing implements java.io.Serializable{
     }
 
     //constructor for Items
-    public Thing(String name, String description, String examination, int aLocation, ArrayList<String> aliases, boolean isPickupable, boolean isUsable, boolean isKeyItem){
+    public Thing(String name, String description, String examination, int aLocation, ArrayList<String> aliases, boolean isPickupable, boolean isKeyItem){
         this.aliases = aliases;
         this.name = name;
         this.description = description;
         this.examination = examination;
         this.isPickupable = isPickupable;
-        this.isUsable = isUsable;
         this.isKeyItem = isKeyItem;
         this.location = aLocation;
     }
@@ -70,9 +69,9 @@ public class Thing implements java.io.Serializable{
         this.isPickupable = isPickupable;
     }
 
-    public void setThingUsability(boolean isUsable){
+    /*public void setThingUsability(boolean isUsable){
         this.isUsable = isUsable;
-    }
+    }*/
 
     //getters
     public String getName(){
@@ -95,9 +94,9 @@ public class Thing implements java.io.Serializable{
         return this.isPickupable;
     }
 
-    public boolean isThingUsable(){
+    /*public boolean isThingUsable(){
         return this.isUsable;
-    }
+    }*/
 
     public boolean isThingKey(){
         return isKeyItem;

@@ -40,6 +40,19 @@ public class Actor extends ThingHolder {
         this.inDialogueResponses = inDialogueResponses;
     }
 
+    public Actor(String aName, String aDescription, String anExamination, int location, ArrayList<String> aliases, ThingList tl, 
+                    BigDecimal anger, BigDecimal fear, BigDecimal relation, BigDecimal happiness, BigDecimal angerTendency, BigDecimal fearTendency, BigDecimal relationTendency, BigDecimal happinessTendency){
+        super(aName, aDescription, anExamination, location, aliases, tl);
+        this.anger = anger;
+        this.fear = fear;
+        this.relation = relation;
+        this.happiness = happiness;
+        this.angerTendency = angerTendency;
+        this.fearTendency = fearTendency;
+        this.relationTendency = relationTendency;
+        this.happinessTendency = happinessTendency;
+    }
+
     //setters
     public void setScene(Scene aScene){
         this.scene = aScene;

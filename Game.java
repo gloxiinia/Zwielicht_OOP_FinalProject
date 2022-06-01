@@ -3,8 +3,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,12 +11,13 @@ import java.util.Map;
 
 import gameobjects.Actor;
 import gameobjects.Dialogue;
-import gameobjects.Item;
 import gameobjects.Scene;
 import gameobjects.Thing;
 import gameobjects.ThingList;
 import globals.Direction;
 import globals.Methods;
+import globals.ReadFile;
+import globals.TextParser;
 
 
 
@@ -69,8 +68,28 @@ public class Game implements java.io.Serializable{
             getPlayer().setIfActorIsInDialogue(true);
             while(getPlayer().isActorInDialogue()){
                 getPlayer().setWhoActorInDialogueWith(actorName);
+                System.out.println(getActiveDialogueNPC().getDescription());
                 processActorScene(1, fileName, getActiveDialogueNPC());
             }
+        }
+        ArrayList<String> attributeChanges = new ArrayList<>();
+        //method for changing an actor's attributes
+        public void addAttributeChanges(Dialogue aDialogue, ArrayList<String> attributeLine){
+            attributeChanges = ReadFile.splitByCommas(attributeLine, 2);
+            System.out.println(attributeChanges);
+            BigDecimal angerChange = new BigDecimal(attributeChanges.get(0));
+            BigDecimal fearChange = new BigDecimal(attributeChanges.get(1));
+            BigDecimal relationChange = new BigDecimal(attributeChanges.get(2));
+            BigDecimal happinessChange = new BigDecimal(attributeChanges.get(3));
+            
+            aDialogue.setAngerChange(angerChange);
+            aDialogue.setFearChange(fearChange);
+            aDialogue.setRelationChange(relationChange);
+            aDialogue.setHappinessChange(happinessChange);
+            
+            
+
+            
         }
         
         public ArrayList<Dialogue> getDialogues(String aLine, Actor anActor) throws NumberFormatException, IOException{
@@ -92,24 +111,17 @@ public class Game implements java.io.Serializable{
                     
                 }
                 else{
-                    ArrayList<String> attributeChanges = ReadFile.splitByCommas(splitDialogue, 2);
-                    System.out.println(attributeChanges);
-                    BigDecimal angerChange = new BigDecimal(attributeChanges.get(0));
-                    BigDecimal fearChange = new BigDecimal(attributeChanges.get(1));
-                    BigDecimal relationChange = new BigDecimal(attributeChanges.get(2));
-                    BigDecimal happinessChange = new BigDecimal(attributeChanges.get(3));
-                    
-                    myDialogue.setAngerChange(angerChange);
-                    myDialogue.setFearChange(fearChange);
-                    myDialogue.setRelationChange(relationChange);
-                    myDialogue.setHappinessChange(happinessChange);
-                    
+                    addAttributeChanges(myDialogue, splitDialogue);
                     nextList.add(myDialogue.getFirstNextDialogue());
                     System.out.println(nextList.size() + ". " + myDialogue.getDialogue());
                     listOfChoices.add(myDialogue);
                     
                 }
             }else{
+                if(splitDialogue.get(0).equals("option")){
+                    System.out.println("checking");
+                    addAttributeChanges(myDialogue, splitDialogue);
+                }
                 nextList.clear();
                 System.out.println(myDialogue.getDialogue());
                 
@@ -125,7 +137,6 @@ public class Game implements java.io.Serializable{
                 BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
                 String nextLine = ReadFile.getSpecificLine(count, fileName);
                 listOfChoices = getDialogues(nextLine, anActor);
-                anActor.printNPCCurrentAttributes();
                 System.out.println();
                 if(this.getNextList().isEmpty()){
                     getPlayer().setIfActorIsInDialogue(false);
@@ -140,6 +151,7 @@ public class Game implements java.io.Serializable{
                     if(!outputs.isEmpty()){
                         if(Methods.isNumeric(output)){
                             count = Integer.parseInt(output);
+                            getActiveDialogueNPC().printNPCCurrentAttributes();
                             processActorScene(count, fileName, anActor);
                         }else{
                             System.out.println(output);
@@ -229,7 +241,7 @@ public class Game implements java.io.Serializable{
         private void showInventory(Actor actor){
             System.out.println("-------------------------INVENTORY-------------------------\n");
             System.out.println(actor.getThings().describeThings());
-            System.out.println("-----------------------------------------------------------\n");
+            System.out.println("\n-----------------------------------------------------------\n");
         }
 
         public String takeItem(String itemName){
@@ -421,21 +433,19 @@ public class Game implements java.io.Serializable{
                     msg = String.valueOf(this.getNextList().get(0));
                     getActiveDialogueNPC().addAllAttributes(getADialogueOption(0).getAngerChange(), 
                     getADialogueOption(0).getFearChange(), getADialogueOption(0).getRelationChange(), getADialogueOption(0).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
+                    listOfChoices.clear();
                     System.out.println();
 
                 }else if(verb.equals("2") && getPlayer().isActorInDialogue()){
                     msg = String.valueOf(this.getNextList().get(1));
                     getActiveDialogueNPC().addAllAttributes(getADialogueOption(1).getAngerChange(), 
                     getADialogueOption(1).getFearChange(), getADialogueOption(1).getRelationChange(), getADialogueOption(1).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
                     System.out.println();
                     
                 }else if(this.getNextList().size() == 3 && verb.equals("3") && getPlayer().isActorInDialogue()){
                     msg = String.valueOf(this.getNextList().get(2));
                     getActiveDialogueNPC().addAllAttributes(getADialogueOption(2).getAngerChange(), 
                     getADialogueOption(2).getFearChange(), getADialogueOption(2).getRelationChange(), getADialogueOption(2).getHappinessChange());
-                    getActiveDialogueNPC().printNPCCurrentAttributes();
                     System.out.println();
                 }
             }else{
@@ -468,11 +478,14 @@ public class Game implements java.io.Serializable{
                             (noun.equals(getActiveDialogueNPC().getName()) || getActiveDialogueNPC().getAliases().contains(noun))){
                         msg += getActiveDialogueNPC().getExamineResponse() + "\n\n";
                         msg += getActiveDialogueNPC().getExamination();
-                    }else if(verb.equals("examine") ){
+                    }else if(verb.equals("examine") && noun.equals("inventory")){
+                        showInventory(getPlayer());
                         msg += getActiveDialogueNPC().getExamineResponse() + "\n" ;
                     }else if(verb.equals("take")){
                         msg += getActiveDialogueNPC().getTakeResponse() + "\n" ;
-                    }  
+                    }else if(verb.equals("examine")){
+                        msg += getActiveDialogueNPC().getExamineResponse() + "\n" ;
+                    }
                 }else{
                     if(directions.contains(noun)){ //processing move commands
                         switch(noun){

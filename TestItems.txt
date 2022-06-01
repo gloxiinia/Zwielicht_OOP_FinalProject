@@ -6,7 +6,6 @@ found on it.
 PICKUP
 false
 false
-false
 Engraved on the side are the initials M.A.
 END
 book on mythology
@@ -15,7 +14,6 @@ open book,mythology book,myth book,book about mythology,book about myths
 A fairly thick book on the various mythos around the world. It's open and 
 looks recently read.
 PICKUP
-true
 true
 false
 The page was opened on the section regarding Greek and Roman myths.
@@ -28,7 +26,6 @@ Edelmar's watch. You'll often catch him checking the time with it.
 PICKUP
 false
 false
-false
 An old pocketwatch owned by the Engel family. Passed on from generation
 to generation. Now in Edelmar's possession.
 END
@@ -39,7 +36,6 @@ An elegant fountain pen found in Edelmar's office.
 PICKUP
 false
 false
-false
 Upon closer inspection, you can see his initials engraved on the side.
 E.V. Edelmar Voigt.
 END
@@ -48,7 +44,6 @@ dog bed
 dog mat,fluffy mat,fluffy bed,fluffy mat and bed,soft bed,fluffy dog bed,fluffy dog mat
 It's Fenrir's dog bed. Comfortable and lavish. Edelmar really doesn't spare any expense.
 PICKUP
-false
 false
 false
 It's got rips here and there, looks well worn. (I think that gives it character don't
@@ -62,7 +57,6 @@ the other hand, considering who owns this place, it's not that shocking anymore.
 and center, there lies the famed Gleipnir. Said to have chained Fenrir until the end of 
 the Gods. (Edelmar says it stays displayed as a reminder for everyone working here).
 PICKUP
-false
 false
 false
 Other than the two Huginn's pointed out, you can see even more intriguing death-dealing

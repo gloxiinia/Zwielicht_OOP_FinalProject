@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import gameobjects.Actor;
-import gameobjects.Item;
 import gameobjects.Scene;
 import gameobjects.Thing;
 import gameobjects.ThingList;
@@ -52,8 +51,8 @@ public class ReadFile {
                 line = reader.readLine();
                 
                 //is the item usable?
-                boolean isUsable = Boolean.parseBoolean(line);
-                line = reader.readLine();
+                //boolean isUsable = Boolean.parseBoolean(line);
+                //line = reader.readLine();
 
                 //is the item a key item?
                 boolean isKeyItem = Boolean.parseBoolean(line);
@@ -66,7 +65,7 @@ public class ReadFile {
                     line = reader.readLine();
                 }
 
-                Item anItem = new Item(name, description, examination, location, aliases, isPickupable, isUsable, isKeyItem);
+                Thing anItem = new Thing(name, description, examination, location, aliases, isPickupable, isKeyItem);
                 items.add(anItem);
 
                 line = reader.readLine();

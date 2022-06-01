@@ -2,10 +2,11 @@ Edelmar
 1
 edel,el
 pocketwatch,fountain pen
-Heir to the Voigt family. He's been part of this organization for around
-8 years. Quite a while, compared to you. Promoted to overseer of this
-branch 3 years ago. With glares people say is as frigid as Fimbulvetr,
-he's difficult to approach, let alone make conversation with. 
+Heir to the Voigt family. He's been part of this organization for around8 years.
+Quite a while, compared to you. Promoted to overseer of this branch 3 years ago. 
+With glares people say is as frigid as Fimbulvetr, he's known to be difficult to 
+approach, let alone make conversation with. (But that doesn't stop some)
+
 Right now, he just looks tired.
 ATTRIBUTES
 6,1,4,4
